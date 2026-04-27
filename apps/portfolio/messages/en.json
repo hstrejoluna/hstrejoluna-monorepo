@@ -1,1 +1,69 @@
-{}
+{
+  "common": {
+    "skipToContent": "Skip to main content"
+  },
+  "hero": {
+    "headline": "Architecting zero-latency ecosystems and immersive digital voids.",
+    "subheadline": "I transform complex constraints into pure, kinetic functional art.",
+    "cta": "INITIATE SEQUENCE",
+    "titleLine1": "SYSTEM",
+    "titleLine2": "ARCHITECT",
+    "telemetryLatency": "LATENCY: 0.00MS",
+    "telemetryFramework": "FRAMEWORK: KINETIC_V2",
+    "coords": "COORDS: 0.00.00° ALPHA",
+    "os": "OS: THE_VOID"
+  },
+  "nav": {
+    "projects": "Projects",
+    "experience": "Experience",
+    "skills": "Skills",
+    "certificates": "Certificates"
+  },
+  "footer": {
+    "freeFork": "Free to fork.",
+    "privacyPolicy": "Privacy Policy",
+    "cookiePolicy": "Cookie Policy",
+    "legalNotice": "Legal Notice",
+    "manageCookies": "Manage Cookies"
+  },
+  "cookie": {
+    "message": "We use cookies to ensure you get the best experience. We respect global privacy control signals.",
+    "accept": "Accept",
+    "reject": "Reject",
+    "privacyLink": "Read our Privacy Policy"
+  },
+  "seo": {
+    "title": "{name} | Senior Software Architect",
+    "ogTitle": "{name} | Obsidian Command Portfolio",
+    "description": "Portfolio of {name} — Senior Software Architect specializing in clean architecture, performance engineering, and immersive digital experiences."
+  },
+  "brand": {
+    "systemOverride": "SYSTEM_OVERRIDE",
+    "systemReady": "[SYSTEM_READY]: INITIALIZING_NEURAL_UPLINK",
+    "uplink": "UPLINK_STATUS: OPTIMAL",
+    "descent": "DESCENT",
+    "scrollToExplore": "SCROLL_TO_EXPLORE",
+    "neuralMap": "NEURAL_MAP",
+    "experienceLog": "EXPERIENCE_LOG",
+    "initializing": "INITIALIZING...",
+    "systemOnline": "SYSTEM ONLINE"
+  },
+  "legal": {
+    "privacyPolicy": {
+      "title": "Privacy Policy",
+      "lastUpdated": "April 2026",
+      "intro": "Welcome to the Dark Kinetic Portfolio. We respect your privacy and are committed to protecting your personal data. This privacy policy will inform you as to how we look after your personal data when you visit our website and tell you about your privacy rights.",
+      "dataCollection": "We operate under a strict data minimization principle. We only collect basic anonymous telemetry (if consented) to understand page load performance. We do not collect identifying Personally Identifiable Information (PII) through this front-end portfolio.",
+      "gpc": "We natively respect the Global Privacy Control signal. If your browser supports and injects navigator.globalPrivacyControl, we automatically opt you out of all non-essential scripts and cookies without showing you a disruptive banner."
+    },
+    "cookiePolicy": {
+      "title": "Cookie Policy",
+      "lastUpdated": "April 2026"
+    },
+    "legalNotice": {
+      "title": "Legal Notice",
+      "lastUpdated": "April 2026"
+    },
+    "contactLabel": "Contact"
+  }
+}
