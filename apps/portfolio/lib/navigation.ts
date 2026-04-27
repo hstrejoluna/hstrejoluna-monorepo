@@ -155,6 +155,9 @@ export const scrollToSection = ({ id, reducedMotion }: ScrollToSectionOptions): 
 };
 
 export const getProjectUrl = (project: Project): string => {
+  if (project.slug?.current) {
+    return `/projects/${project.slug.current}`;
+  }
   if (project.micrositePath) {
     return project.micrositePath;
   }
