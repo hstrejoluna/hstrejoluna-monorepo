@@ -3,6 +3,7 @@ import Image from "next/image";
 import { notFound } from "next/navigation";
 import { cache } from "react";
 import { setRequestLocale, getTranslations } from "next-intl/server";
+import { safeJsonLd } from "@/lib/safe-json-ld";
 import { client, urlFor } from "@/lib/sanity";
 import { Project, PortableTextBlock } from "@/types/sanity";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
@@ -20,9 +21,20 @@ const projectQuery = `*[_type == "project" && slug.current == $slug][0] {
   techStack[]->
 }`;
 
+const allSlugsQuery = `*[_type == "project" && defined(slug.current)].slug.current`;
+
 const getProject = cache(async (slug: string): Promise<Project | null> => {
   return client.fetch<Project | null>(projectQuery, { slug });
 });
+
+export async function generateStaticParams() {
+  try {
+    const slugs = await client.fetch<string[]>(allSlugsQuery);
+    return slugs.map((slug) => ({ slug }));
+  } catch {
+    return [];
+  }
+}
 
 export async function generateMetadata({ params }: ProjectPageProps): Promise<Metadata> {
   const { locale, slug } = await params;
@@ -102,7 +114,7 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
     <main className="min-h-screen bg-background text-white pt-32 pb-24 px-4 md:px-8">
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        dangerouslySetInnerHTML={{ __html: safeJsonLd(jsonLd) }}
       />
 
       <div className="max-w-5xl mx-auto">
@@ -156,6 +168,7 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
                   src={urlFor(project.image).url()}
                   alt={project.image.alt || project.title}
                   fill
+                  sizes="(max-width: 1024px) 100vw, 66vw"
                   className="object-cover transition-transform duration-[2s] group-hover:scale-105"
                 />
               </div>
@@ -170,11 +183,12 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
                 <h2 className="text-4xl font-black uppercase italic tracking-tighter">{t("gallery")}</h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {project.gallery.map((img, idx) => (
-                    <div key={idx} className="relative aspect-video overflow-hidden border border-white/5 grayscale hover:grayscale-0 transition-all duration-500 group">
+                    <div key={img.asset?._ref ?? String(idx)} className="relative aspect-video overflow-hidden border border-white/5 grayscale hover:grayscale-0 transition-all duration-500 group">
                       <Image
                         src={urlFor(img).url()}
                         alt={img.alt || `${project.title} gallery ${idx + 1}`}
                         fill
+                        sizes="(max-width: 768px) 100vw, 50vw"
                         className="object-cover transition-transform duration-700 group-hover:scale-110"
                       />
                     </div>
