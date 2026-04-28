@@ -6,6 +6,9 @@ on:
       - master
   workflow_dispatch:
 
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
 concurrency:
   group: ci-${{ github.ref }}
   cancel-in-progress: true
@@ -23,6 +26,7 @@ jobs:
       - name: Detect Storybook scope changes
         id: storybook_changes
         uses: dorny/paths-filter@v3
+        continue-on-error: ${{ env.ACT == 'true' }}
         with:
           filters: |
             storybook:
@@ -45,7 +49,7 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
           cache: npm
 
       - name: Next.js Cache
@@ -74,9 +78,9 @@ jobs:
         run: npm run test --workspace=apps/portfolio
 
       - name: Storybook static build (portfolio)
-        if: ${{ github.event_name == 'workflow_dispatch' || steps.storybook_changes.outputs.storybook == 'true' }}
+        if: ${{ github.event_name == 'workflow_dispatch' || steps.storybook_changes.outputs.storybook == 'true' || env.ACT == 'true' }}
         run: npm run storybook:build --workspace=apps/portfolio
 
       - name: Storybook failure contract (portfolio)
-        if: ${{ github.event_name == 'workflow_dispatch' || steps.storybook_changes.outputs.storybook == 'true' }}
+        if: ${{ github.event_name == 'workflow_dispatch' || steps.storybook_changes.outputs.storybook == 'true' || env.ACT == 'true' }}
         run: npm run storybook:build:expect-fail --workspace=apps/portfolio
