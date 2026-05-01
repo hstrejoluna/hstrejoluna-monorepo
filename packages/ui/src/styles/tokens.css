@@ -36,7 +36,7 @@
   --lg-tint: hsl(220 14% 12%);
 
   /* Filter parameters (default = "med" intensity) */
-  --lg-blur: 12px;
+  --lg-blur: 3px;
   --lg-saturation: 180%;
   --lg-refraction-scale: 9px;
   --lg-specular-opacity: 0.18;
@@ -56,15 +56,15 @@
 [data-lg-intensity="low"] {
   --lg-refraction-scale: 4px;
   --lg-specular-opacity: 0.10;
-  --lg-blur: 8px;
+  --lg-blur: 1px;
 }
 [data-lg-intensity="med"] {
   --lg-refraction-scale: 9px;
   --lg-specular-opacity: 0.18;
-  --lg-blur: 12px;
+  --lg-blur: 3px;
 }
 [data-lg-intensity="high"] {
   --lg-refraction-scale: 16px;
   --lg-specular-opacity: 0.28;
-  --lg-blur: 16px;
+  --lg-blur: 5px;
 }

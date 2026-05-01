@@ -2,12 +2,15 @@ import { useEffect, useRef, useState } from "react";
 
 export function useActiveSection<T extends string>(
   sectionIds: readonly T[],
-  threshold: number = 0.5
+  threshold: number = 0.5,
+  ready: boolean = true
 ) {
   const [activeId, setActiveId] = useState<T | "">("");
   const visibleEntriesRef = useRef<Map<T, IntersectionObserverEntry>>(new Map());
 
   useEffect(() => {
+    if (!ready) return;
+
     const safeThreshold = Math.min(Math.max(threshold, 0.1), 1);
     const viewportBandInsetPercent = ((1 - safeThreshold) / 2) * 100;
 
@@ -57,7 +60,7 @@ export function useActiveSection<T extends string>(
       });
       observer.disconnect();
     };
-  }, [sectionIds, threshold]);
+  }, [sectionIds, threshold, ready]);
 
   return activeId;
 }

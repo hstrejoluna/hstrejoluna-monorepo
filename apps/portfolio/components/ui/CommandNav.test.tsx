@@ -31,9 +31,9 @@ describe("CommandNav", () => {
     );
 
     expect(
-      screen.getByRole("navigation", { name: /primary section navigation/i }),
+      screen.getByRole("navigation", { name: /primary sections/i }),
     ).toBeInTheDocument();
-    expect(screen.getAllByRole("link", { name: /projects/i })[0]).toHaveAttribute(
+    expect(screen.getAllByRole("button", { name: /projects/i })[0]).toHaveAttribute(
       "aria-current",
       "location",
     );
@@ -49,8 +49,8 @@ describe("CommandNav", () => {
       </NextIntlClientProvider>,
     );
 
-    fireEvent.click(screen.getByRole("button", { name: /open navigation menu/i }));
-    expect(screen.getByText(/no social links configured/i)).toBeInTheDocument();
+    fireEvent.click(screen.getAllByRole("button", { name: messages.brand.menu })[0]);
+    expect(screen.queryByText(/Socials/i)).not.toBeInTheDocument();
   });
 
   it("normalizes plaintext email social links and uses smooth section navigation", () => {
@@ -76,7 +76,7 @@ describe("CommandNav", () => {
       screen.getAllByRole("link", { name: /contact email/i })[0],
     ).toHaveAttribute("href", "mailto:dev@example.com");
 
-    fireEvent.click(screen.getAllByRole("link", { name: /skills/i })[0]);
+    fireEvent.click(screen.getAllByRole("button", { name: /skills/i })[0]);
     expect(scrollSpy).toHaveBeenCalledWith({
       id: "skills",
       reducedMotion: false,
@@ -132,9 +132,8 @@ describe("CommandNav", () => {
       </NextIntlClientProvider>,
     );
 
-    expect(screen.getByTestId("command-nav")).toHaveAttribute(
-      "data-hidden",
-      "true",
+    expect(screen.getByTestId("liquid-nav")).toHaveClass(
+      "pointer-events-none"
     );
   });
 });

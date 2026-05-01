@@ -1,8 +1,7 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { useReducedMotion } from "@hstrejoluna/ui";
-import { useAutoHideNavigation } from "@/hooks/useAutoHideNavigation";
 import { useActiveSection } from "@/hooks/useActiveSection";
 import {
   Profile,
@@ -16,7 +15,6 @@ import { ProjectsOverview } from "./fragments/ProjectsOverview";
 import { ExperienceOverview } from "./fragments/ExperienceOverview";
 import { SkillsOverview } from "./fragments/SkillsOverview";
 import { CertificatesOverview } from "./fragments/CertificatesOverview";
-import { SectionDock } from "./ui/SectionDock";
 import { CommandNav } from "./ui/CommandNav";
 import { BootSequence } from "@hstrejoluna/ui";
 import {
@@ -27,9 +25,10 @@ import {
   LazyMotion,
   domAnimation,
 } from "framer-motion";
-import { navSections, streamSectionIds } from "@/lib/sections";
+import { navSections, navSectionIds, streamSectionIds } from "@/lib/sections";
 import type { NavSectionId, StreamSectionId } from "@/lib/sections";
 import { useTranslations } from "next-intl";
+import { scrollToSection } from "@/lib/navigation";
 
 interface ObsidianStreamProps {
   profile: Profile | null;
@@ -85,9 +84,9 @@ export const ObsidianStream = ({
   const skipBootSequence = process.env.NEXT_PUBLIC_SKIP_BOOT_SEQUENCE === "1";
   const [isBooted, setIsBooted] = useState(skipBootSequence);
   const isReducedMotion = useReducedMotion();
-  const isNavigationHidden = useAutoHideNavigation(isBooted);
+  const isNavigationHidden = false;
 
-  const activeId = useActiveSection<StreamSectionId>(streamSectionIds, 0.4);
+  const activeId = useActiveSection<StreamSectionId>(streamSectionIds, 0.4, isBooted);
 
   const { scrollYProgress } = useScroll();
   const sectionBaseWrapperClass =
@@ -135,12 +134,7 @@ export const ObsidianStream = ({
                   {profile?.name || tCommon("fullName")}
                 </span>
               </m.div>
-
-              <SectionDock
-                sections={navSections}
-                activeId={activeId}
-                hideOnScroll={isNavigationHidden}
-              />
+              
               <CommandNav
                 activeId={activeId}
                 counts={{
@@ -152,8 +146,7 @@ export const ObsidianStream = ({
                 hideOnScroll={isNavigationHidden}
               />
 
-              <main id="main-content" className="relative z-10 flex flex-col w-full">
-                <section id="hero" className="stream-section">
+              <main id="main-content" className="relative z-10 flex flex-col w-full">                <section id="hero" className="stream-section">
                   <HeroFragment profile={profile} />
                 </section>
 

@@ -38,23 +38,6 @@
 .lg-glass[data-lg-variant="circle"] { border-radius: var(--lg-radius-circle); }
 .lg-glass[data-lg-variant="dialog"] { border-radius: var(--lg-radius-dialog); }
 
-/* Specular rim (ADR-2: pseudo + mix-blend-mode, no feSpecularLighting) ----*/
-.lg-glass::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  pointer-events: none;
-  background: linear-gradient(
-    180deg,
-    hsla(0, 0%, 100%, calc(var(--lg-specular-opacity) * 1.2)) 0%,
-    transparent 40%
-  );
-  mix-blend-mode: screen;
-  opacity: 0.9;
-  z-index: 1;
-}
-
 /* 1. Upgrade — SVG refraction (CSS-only gate) -----------------------------*/
 @supports (backdrop-filter: url("#x")) {
   @media (min-width: 480px) {

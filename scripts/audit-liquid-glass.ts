@@ -20,7 +20,6 @@ const MIGRATED_FILES = [
   "apps/portfolio/components/fragments/HeroFragment.tsx",
   "apps/portfolio/components/fragments/CookieBanner.tsx",
   "apps/portfolio/components/fragments/ProjectsOverview.tsx",
-  "packages/ui/src/components/SectionTimeline.tsx",
   "packages/ui/src/components/HudChip.tsx",
   "apps/portfolio/components/ui/LocaleSwitcher.tsx",
   "apps/portfolio/components/fragments/ProjectFragment.tsx",

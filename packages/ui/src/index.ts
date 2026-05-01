@@ -1,3 +1,4 @@
+export * from "./components/LiquidNav";
 export {
   CommandSurface,
   type CommandSurfaceCounts,
@@ -5,11 +6,6 @@ export {
   type CommandSurfaceSection,
   type CommandSurfaceSocialLink,
 } from "./components/CommandSurface";
-export {
-  SectionTimeline,
-  type SectionTimelineItem,
-  type SectionTimelineProps,
-} from "./components/SectionTimeline";
 export {
   CertificatesPanel,
   type CertificatesPanelItem,

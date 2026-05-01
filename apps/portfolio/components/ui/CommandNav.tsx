@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo } from "react";
-import { CommandSurface } from "@hstrejoluna/ui";
+import { LiquidNav } from "@hstrejoluna/ui";
 import { useReducedMotion } from "@hstrejoluna/ui";
 import { normalizeSocialLinks, scrollToSection } from "@/lib/navigation";
 import { navSectionIds, navSections } from "@/lib/sections";
@@ -22,6 +22,26 @@ interface CommandNavProps {
   socials?: ProfileSocialLink[];
   hideOnScroll?: boolean;
 }
+
+const formatCount = (value: number): string =>
+  value.toString().padStart(2, "0");
+
+const resolveLabel = (
+  activeId: string,
+  counts: CommandNavCounts,
+  labels: any,
+): string => {
+  if (!activeId) return labels.initializing;
+  if (activeId === "hero") return labels.systemOnline;
+  if (activeId === "projects")
+    return `${labels.projectsPrefix} [${formatCount(counts.projects)}]`;
+  if (activeId === "experience")
+    return `${labels.experiencePrefix} [${formatCount(counts.experience)}]`;
+  if (activeId === "skills") return labels.skills;
+  if (activeId === "certificates")
+    return `${labels.certificatesPrefix} [${formatCount(counts.certificates)}]`;
+  return activeId.toUpperCase();
+};
 
 export const CommandNav = ({
   activeId,
@@ -45,24 +65,30 @@ export const CommandNav = ({
     });
   };
 
+  const statusLabel = resolveLabel(activeId, counts, {
+    initializing: tBrand("initializing"),
+    systemOnline: tBrand("systemOnline"),
+    projectsPrefix: tNav("projects").toUpperCase(),
+    experiencePrefix: tNav("experience").toUpperCase(),
+    skills: tBrand("neuralMap"),
+    certificatesPrefix: tNav("certificates").toUpperCase(),
+  });
+
   return (
-    <CommandSurface
+    <LiquidNav
       activeId={activeId}
-      counts={counts}
       sections={navSections}
       socials={socialLinks}
       hideOnScroll={hideOnScroll}
       onSectionNavigate={handleSectionNavigation}
+      statusLabel={statusLabel}
       labels={{
-        initializing: tBrand("initializing"),
-        systemOnline: tBrand("systemOnline"),
-        projectsPrefix: tNav("projects").toUpperCase(),
-        experiencePrefix: tNav("experience").toUpperCase(),
-        skills: tBrand("neuralMap"),
-        certificatesPrefix: tNav("certificates").toUpperCase(),
+        menu: tBrand("menu") || "Menu",
+        close: tBrand("close") || "Close",
+        socialHeading: tBrand("socialHeading") || "Social",
       }}
     >
       <LocaleSwitcher />
-    </CommandSurface>
+    </LiquidNav>
   );
 };
