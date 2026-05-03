@@ -35,13 +35,13 @@ ENABLED. Test runner: `npm test` (vitest from root → apps/portfolio). E2E: `np
 
 ## Phase 3 — Shared Hooks in packages/ui (TDD)
 
-- [ ] 3.1 RED: `packages/ui/src/hooks/useLiquidPointer.test.ts` — single rAF listener, writes `--mx/--my/--vx/--vy` CSS vars + ref store, NO React re-renders, teardown removes listener, respects reduced-motion (no listener attached).
-- [ ] 3.2 GREEN: implement `packages/ui/src/hooks/useLiquidPointer.ts`.
-- [ ] 3.3 Re-export `useLiquidPointer` from `packages/ui/src/index.ts`.
-- [ ] 3.4 RED: `packages/ui/src/hooks/useLiquidHeroCapability.test.ts` — composes `useLiquidGlassGates()` + viewport ≥ 1024px + hardwareConcurrency ≥ 4 + saveData false + WebGL2 probe + IntersectionObserver. Returns discriminated union `static | css-only | css+webgl`. Mocks matchMedia, navigator.connection, navigator.hardwareConcurrency, IntersectionObserver, WebGL probe canvas.
-- [ ] 3.5 GREEN: implement `packages/ui/src/hooks/useLiquidHeroCapability.ts` composing `useLiquidGlassGates()` + missing checks.
-- [ ] 3.6 Re-export `useLiquidHeroCapability` from `packages/ui/src/index.ts`.
-- [ ] 3.7 REFACTOR: extract WebGL2 probe utility if reused; ensure tests stay green.
+- [x] 3.1 RED: `packages/ui/src/hooks/useLiquidPointer.test.ts` — 4 specs (stable ref no rerenders / CSS vars on target / unmount removes listener / reduced-motion no listener attached).
+- [x] 3.2 GREEN: `packages/ui/src/hooks/useLiquidPointer.ts` — single rAF batched, mutates ref + CSS vars (--mx --my --vx --vy), velocity damping 0.85, gain 4, viewport-relative when no targetRef.
+- [x] 3.3 Re-exported from `packages/ui/src/index.ts`.
+- [x] 3.4 RED: `packages/ui/src/hooks/useLiquidHeroCapability.test.ts` — 8 specs covering all downgrade paths.
+- [x] 3.5 GREEN: `packages/ui/src/hooks/useLiquidHeroCapability.ts` composes `useLiquidGlassGates` + 5 extra checks (1024px / hwc≥4 / !saveData / WebGL2 / IO). Discriminated union `static | css-only | css+webgl`.
+- [x] 3.6 Re-exported from `packages/ui/src/index.ts`.
+- [x] 3.7 REFACTOR: probe utility kept inline (YAGNI — single caller). 48 files / 226 tests pass.
 
 ## Phase 4 — Hero components in apps/portfolio (TDD)
 
