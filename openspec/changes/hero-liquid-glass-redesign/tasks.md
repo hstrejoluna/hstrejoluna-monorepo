@@ -25,13 +25,13 @@ ENABLED. Test runner: `npm test` (vitest from root → apps/portfolio). E2E: `np
 
 ## Phase 2 — Library Verification (Context7 — gate to Phase 3)
 
-- [ ] 2.1 Context7 resolve `@react-three/fiber`. Capture: Canvas frameloop demand mode, useFrame in r3f v9, React 19 + Next.js 16 RSC dynamic-import compatibility.
-- [ ] 2.2 Context7 resolve `@react-three/drei`. Capture: `MeshTransmissionMaterial` complete prop list (transmission, thickness, ior, chromaticAberration, distortion, distortionScale, temporalDistortion, samples, resolution, backside) + subpath import path for tree-shaking.
-- [ ] 2.3 Context7 resolve `framer-motion` 12. Capture: `useScroll({ target, offset })` v12 signature; `LazyMotion + domAnimation + strict` interaction with `useScroll` and `useTransform`.
-- [ ] 2.4 Context7 resolve `next-intl` 4.9. Capture: `useTranslations` in Server Component vs `getTranslations`, async pattern.
-- [ ] 2.5 Context7 resolve Next.js 16. Capture: `next/dynamic({ ssr: false })` placement rules under RSC + Turbopack tree-shake of `@react-three/drei`.
-- [ ] 2.6 Save findings to engram as `sdd/hero-liquid-glass-redesign/context7` for apply phase to reference.
-- [ ] 2.7 Install verified versions of `three`, `@react-three/fiber`, `@react-three/drei` into `apps/portfolio/package.json` (NOT `packages/ui` — hero-specific). Verify peer compatibility with React 19 + framer-motion 12.
+- [x] 2.1 r3f v9 verified — Canvas frameloop "demand", useFrame((state, delta, xrFrame), priority?), R19+R19.2 compat (reconciler bundled), Next 16 OK with TS jsx-runtime shim.
+- [x] 2.2 drei MeshTransmissionMaterial verified — full prop list captured; subpath import `@react-three/drei/core/MeshTransmissionMaterial` confirmed (file present in node_modules/@react-three/drei/core).
+- [x] 2.3 framer-motion 12 useScroll verified — `useScroll({ target, offset })` returns 4 MotionValues; safe under LazyMotion strict (hook only, no motion.* JSX).
+- [x] 2.4 next-intl 4.9 RSC verified — `useTranslations` (sync hook) for non-async RSC; `getTranslations` async for data-fetching RSC. Use sync in HeroSection.
+- [x] 2.5 Next 16 dynamic verified — 🚨 ssr:false NOT allowed in RSC; declare `dynamic(..., { ssr: false })` inside HeroLiquidField (client), NOT HeroSection (RSC).
+- [x] 2.6 Findings saved to engram `sdd/hero-liquid-glass-redesign/context7` (full prop tables, decisions locked).
+- [x] 2.7 Installed: `three@^0.184.0`, `@react-three/fiber@^9.6.1`, `@react-three/drei@^10.7.7` in `apps/portfolio`. tsc + vitest (46 files / 214 tests) clean.
 
 ## Phase 3 — Shared Hooks in packages/ui (TDD)
 
