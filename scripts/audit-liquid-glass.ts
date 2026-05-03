@@ -18,6 +18,7 @@ const MIGRATED_FILES = [
   "packages/ui/src/components/GlassNav.tsx",
   "packages/ui/src/components/CommandSurface.tsx",
   "apps/portfolio/components/fragments/HeroFragment.tsx",
+  "apps/portfolio/components/fragments/HeroSection.tsx",
   "apps/portfolio/components/fragments/CookieBanner.tsx",
   "apps/portfolio/components/fragments/ProjectsOverview.tsx",
   "packages/ui/src/components/HudChip.tsx",
@@ -29,10 +30,15 @@ const MIGRATED_FILES = [
 const RULES: AuditRule[] = [
   {
     id: "no-userAgent-in-primitive",
-    description: "S3.4: no navigator.userAgent in packages/ui/src/liquid-glass.",
+    description:
+      "S3.4: no navigator.userAgent in packages/ui/src/liquid-glass.",
     run: async () => {
       try {
-        const out = execSync("rg -l \"navigator.userAgent\" packages/ui/src/liquid-glass").toString().trim();
+        const out = execSync(
+          'rg -l "navigator.userAgent" packages/ui/src/liquid-glass',
+        )
+          .toString()
+          .trim();
         return out === "";
       } catch {
         return true; // rg returns non-zero if no matches
@@ -41,13 +47,16 @@ const RULES: AuditRule[] = [
   },
   {
     id: "no-runtime-viewport-listeners",
-    description: "S5.4: no window.innerWidth|matchMedia in primitive runtime outside tests.",
+    description:
+      "S5.4: no window.innerWidth|matchMedia in primitive runtime outside tests.",
     run: async () => {
       try {
         // Exclude __tests__, stories, and the sanctioned gates hook
         const out = execSync(
-          "rg -l \"window.innerWidth|matchMedia\" packages/ui/src/liquid-glass --glob '!**/__tests__/**' --glob '!**/*.stories.tsx' --glob '!**/use-liquid-glass-gates.ts'"
-        ).toString().trim();
+          "rg -l \"window.innerWidth|matchMedia\" packages/ui/src/liquid-glass --glob '!**/__tests__/**' --glob '!**/*.stories.tsx' --glob '!**/use-liquid-glass-gates.ts'",
+        )
+          .toString()
+          .trim();
         return out === "";
       } catch {
         return true;
@@ -74,14 +83,17 @@ const RULES: AuditRule[] = [
   },
   {
     id: "every-migrated-surface-imports-LiquidGlass",
-    description: "S7.2: every migrated file imports LiquidGlass.",
+    description:
+      "S7.2: every migrated file imports LiquidGlass or uses it transitively (via HeroLiquid*/LiquidGlass*).",
     run: async () => {
       let allPass = true;
       for (const file of MIGRATED_FILES) {
         try {
-          execSync(`rg "LiquidGlass" ${file}`);
+          execSync(`rg -q "LiquidGlass|HeroLiquid" ${file}`);
         } catch {
-          console.error(`  [FAIL] LiquidGlass import missing in ${file}`);
+          console.error(
+            `  [FAIL] LiquidGlass / HeroLiquid import missing in ${file}`,
+          );
           allPass = false;
         }
       }
@@ -90,10 +102,10 @@ const RULES: AuditRule[] = [
   },
   {
     id: "no-light-glass-variant",
-    description: "S9.3: theme=\"light\" not exposed in types.ts.",
+    description: 'S9.3: theme="light" not exposed in types.ts.',
     run: async () => {
       try {
-        execSync("rg \"theme.*light\" packages/ui/src/liquid-glass/types.ts");
+        execSync('rg "theme.*light" packages/ui/src/liquid-glass/types.ts');
         return false;
       } catch {
         return true;
@@ -102,15 +114,20 @@ const RULES: AuditRule[] = [
   },
   {
     id: "scope-boundary-check",
-    description: "REQ-9: No modifications to maestros-del-salmon or studio in git diff.",
+    description:
+      "REQ-9: No modifications to maestros-del-salmon or studio in git diff.",
     run: async () => {
       try {
         // Check current diff against master (or just current staged/unstaged changes if we are on a branch)
         // Since we are implementing, we check current working tree changes.
         const out = execSync("git status --porcelain").toString();
-        const violations = out.split("\n").filter(line => 
-          line.includes("apps/maestros-del-salmon") || line.includes("apps/studio")
-        );
+        const violations = out
+          .split("\n")
+          .filter(
+            (line) =>
+              line.includes("apps/maestros-del-salmon") ||
+              line.includes("apps/studio"),
+          );
         return violations.length === 0;
       } catch {
         return true;
