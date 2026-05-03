@@ -1,17 +1,21 @@
 // SkillsOverview.tsx
 import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { m, AnimatePresence } from "framer-motion";
 import { type Skill } from "@/types/sanity";
 import { HudChip } from "@hstrejoluna/ui";
 
 export const SkillsOverview = ({ skills }: { skills: Skill[] }) => {
   const [expandedId, setExpandedId] = useState<string | null>(null);
-  
-  // Create unique categories
-  const categories = Array.from(new Set(skills.map(s => s.category).filter(Boolean))) as string[];
-  const [activeCategory, setActiveCategory] = useState<string>(categories[0] || '');
 
-  const filteredSkills = skills.filter(s => s.category === activeCategory);
+  // Create unique categories
+  const categories = Array.from(
+    new Set(skills.map((s) => s.category).filter(Boolean)),
+  ) as string[];
+  const [activeCategory, setActiveCategory] = useState<string>(
+    categories[0] || "",
+  );
+
+  const filteredSkills = skills.filter((s) => s.category === activeCategory);
 
   return (
     <div className="w-full relative z-20">
@@ -25,9 +29,9 @@ export const SkillsOverview = ({ skills }: { skills: Skill[] }) => {
               setExpandedId(null);
             }}
             className={`font-mono text-xs md:text-sm uppercase tracking-widest px-4 py-2 transition-colors duration-300 ${
-              activeCategory === cat 
-                ? 'text-primary border-b-2 border-primary bg-primary/5' 
-                : 'text-on_surface_variant hover:text-on_surface'
+              activeCategory === cat
+                ? "text-primary border-b-2 border-primary bg-primary/5"
+                : "text-on_surface_variant hover:text-on_surface"
             }`}
           >
             {cat}
@@ -39,14 +43,14 @@ export const SkillsOverview = ({ skills }: { skills: Skill[] }) => {
       <div className="grid grid-cols-1 gap-0 border-t border-surface_container_highest">
         {filteredSkills.map((skill) => {
           const isExpanded = expandedId === skill._id;
-          
+
           return (
-            <motion.div
+            <m.div
               layout
               key={skill._id}
-              className={`border-b border-surface_container_highest bg-background ${isExpanded ? 'bg-surface_container_lowest' : ''}`}
+              className={`border-b border-surface_container_highest bg-background ${isExpanded ? "bg-surface_container_lowest" : ""}`}
             >
-              <button 
+              <button
                 type="button"
                 onClick={() => setExpandedId(isExpanded ? null : skill._id)}
                 aria-expanded={isExpanded}
@@ -61,7 +65,7 @@ export const SkillsOverview = ({ skills }: { skills: Skill[] }) => {
                     {skill.name}
                   </h4>
                 </div>
-                
+
                 <div className="hidden md:flex gap-2">
                   <HudChip>SYNC_RATE: {skill.proficiency || 0}%</HudChip>
                 </div>
@@ -69,7 +73,7 @@ export const SkillsOverview = ({ skills }: { skills: Skill[] }) => {
 
               <AnimatePresence>
                 {isExpanded && (
-                  <motion.div
+                  <m.div
                     id={`skill-panel-${skill._id}`}
                     initial={{ height: 0, opacity: 0 }}
                     animate={{ height: "auto", opacity: 1 }}
@@ -80,25 +84,32 @@ export const SkillsOverview = ({ skills }: { skills: Skill[] }) => {
                     <div className="p-6 md:p-8 space-y-6">
                       {/* Visual Proficiency Bar */}
                       <div className="w-full bg-surface_container_highest h-2 relative overflow-hidden">
-                        <motion.div 
+                        <m.div
                           initial={{ width: 0 }}
                           animate={{ width: `${skill.proficiency || 0}%` }}
                           transition={{ duration: 1, ease: "easeOut" }}
                           className="absolute left-0 top-0 bottom-0 bg-primary"
                         />
                       </div>
-                      
+
                       <div className="font-mono text-xs text-on_surface_variant leading-relaxed columns-1 md:columns-2 gap-8">
                         <div>
-                          <p className="text-primary mb-2">{'// DOCUMENTATION_FRAGMENT'}</p>
-                          <p>{skill.name} represents a core competency within the {skill.category} cluster. Proficiency mapped at {skill.proficiency}% indicates active mastery and deployment capability in production environments.</p>
+                          <p className="text-primary mb-2">
+                            {"// DOCUMENTATION_FRAGMENT"}
+                          </p>
+                          <p>
+                            {skill.name} represents a core competency within the{" "}
+                            {skill.category} cluster. Proficiency mapped at{" "}
+                            {skill.proficiency}% indicates active mastery and
+                            deployment capability in production environments.
+                          </p>
                         </div>
                       </div>
                     </div>
-                  </motion.div>
+                  </m.div>
                 )}
               </AnimatePresence>
-            </motion.div>
+            </m.div>
           );
         })}
       </div>
