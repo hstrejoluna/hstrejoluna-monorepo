@@ -21,4 +21,6 @@ export * from "./components/BootSequence";
 export * from "./components/TelemetryHUD";
 export * from "./components/LegalPageShell";
 export * from "./hooks/useReducedMotion";
+export * from "./hooks/useLiquidPointer";
+export * from "./hooks/useLiquidHeroCapability";
 export * from "./liquid-glass";

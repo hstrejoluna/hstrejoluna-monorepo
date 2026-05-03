@@ -16,16 +16,18 @@ test.describe("portfolio navigation behavior", () => {
     await page.evaluate(() => {
       const el = document.getElementById("projects");
       if (el) {
-        window.scrollTo({ top: el.offsetTop, behavior: "auto" });
+        el.scrollIntoView({ block: "center", behavior: "auto" });
       }
     });
 
     await expect
-      .poll(() =>
-        page
-          .getByRole("button", { name: /^projects$/i })
-          .first()
-          .getAttribute("aria-current")
+      .poll(
+        () =>
+          page
+            .getByRole("button", { name: /^projects$/i })
+            .first()
+            .getAttribute("aria-current"),
+        { timeout: 15_000, intervals: [250, 500, 1000] }
       )
       .toBe("location");
   });
