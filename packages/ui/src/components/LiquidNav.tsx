@@ -1,7 +1,7 @@
 "use client";
 
 import React, { type MouseEvent, useState } from "react";
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence, m } from "framer-motion";
 import { LiquidGlass } from "../liquid-glass";
 import { cn } from "../utils/cn";
 import { LG_FILTER_IDS } from "../liquid-glass/filter-defs";
@@ -64,7 +64,7 @@ export const LiquidNav = ({
 
   const handleNavigate = (
     event: MouseEvent<HTMLAnchorElement | HTMLButtonElement>,
-    sectionId: string
+    sectionId: string,
   ) => {
     event.preventDefault();
     onSectionNavigate?.(sectionId);
@@ -72,12 +72,12 @@ export const LiquidNav = ({
   };
 
   return (
-    <motion.header
+    <m.header
       data-testid="liquid-nav"
       className={cn(
         "fixed bottom-4 left-4 right-4 md:bottom-8 md:left-1/2 md:right-auto md:-translate-x-1/2 z-50",
         shouldHide ? "pointer-events-none" : "",
-        className
+        className,
       )}
       initial={{ y: 100 }}
       animate={{ y: shouldHide ? 140 : 0, opacity: shouldHide ? 0 : 1 }}
@@ -95,7 +95,9 @@ export const LiquidNav = ({
               <span className="absolute inline-flex h-2 w-2 animate-ping rounded-full bg-primary opacity-75" />
               <span className="relative inline-flex h-2 w-2 rounded-full bg-primary" />
             </span>
-            <span className="uppercase tracking-widest truncate">{statusLabel}</span>
+            <span className="uppercase tracking-widest truncate">
+              {statusLabel}
+            </span>
           </div>
           {children}
         </div>
@@ -103,26 +105,31 @@ export const LiquidNav = ({
         {/* Center: Desktop Nav Links (Gooey) */}
         <div className="relative hidden md:flex items-center justify-center">
           {/* Gooey Background Layer */}
-          <div 
+          <div
             className="absolute inset-0 pointer-events-none flex items-center gap-2 px-4 opacity-30"
             style={{ filter: `url(#${LG_FILTER_IDS.gooey})` }}
           >
             {sections.map((section) => {
               const isActive = activeId === section.id;
               return (
-                <div key={`bg-${section.id}`} className="relative px-4 py-2 text-xs font-mono uppercase tracking-widest">
+                <div
+                  key={`bg-${section.id}`}
+                  className="relative px-4 py-2 text-xs font-mono uppercase tracking-widest"
+                >
                   {/* Invisible placeholder to force matching box width */}
-                  <span className="opacity-0">{section.shortLabel ?? section.label}</span>
+                  <span className="opacity-0">
+                    {section.shortLabel ?? section.label}
+                  </span>
                   <AnimatePresence>
                     {isActive && (
-                      <motion.div
+                      <m.div
                         layoutId="liquid-active-pill"
                         className="absolute inset-0 bg-primary rounded-full"
                         transition={{
                           type: "spring",
                           stiffness: 150,
                           damping: 18,
-                          mass: 1.2
+                          mass: 1.2,
                         }}
                       />
                     )}
@@ -133,7 +140,10 @@ export const LiquidNav = ({
           </div>
 
           {/* Interactive Text Layer */}
-          <nav aria-label="Primary sections" className="relative flex items-center gap-2 px-4">
+          <nav
+            aria-label="Primary sections"
+            className="relative flex items-center gap-2 px-4"
+          >
             {sections.map((section) => {
               const isActive = activeId === section.id;
               return (
@@ -142,11 +152,15 @@ export const LiquidNav = ({
                   onClick={(e) => handleNavigate(e, section.id)}
                   className={cn(
                     "relative px-4 py-2 text-xs font-mono uppercase tracking-widest transition-colors duration-500 focus-visible:outline-none cursor-pointer",
-                    isActive ? "text-primary drop-shadow-[0_0_8px_rgba(255,180,165,0.4)]" : "text-on_surface hover:text-white"
+                    isActive
+                      ? "text-primary drop-shadow-[0_0_8px_rgba(255,180,165,0.4)]"
+                      : "text-on_surface hover:text-white",
                   )}
                   aria-current={isActive ? "location" : undefined}
                 >
-                  <span className="relative z-10">{section.shortLabel ?? section.label}</span>
+                  <span className="relative z-10">
+                    {section.shortLabel ?? section.label}
+                  </span>
                 </button>
               );
             })}
@@ -184,7 +198,7 @@ export const LiquidNav = ({
       {/* Mobile Panel */}
       <AnimatePresence>
         {isMenuOpen && (
-          <motion.div
+          <m.div
             id="mobile-liquid-panel"
             className="absolute bottom-[calc(100%+16px)] left-0 right-0 z-40 md:hidden"
             initial={{ opacity: 0, y: 20, scale: 0.95 }}
@@ -206,7 +220,9 @@ export const LiquidNav = ({
                       onClick={(e) => handleNavigate(e, section.id)}
                       className={cn(
                         "w-full text-left px-4 py-3 rounded-xl text-sm font-mono uppercase tracking-wider transition-colors cursor-pointer",
-                        isActive ? "bg-primary/20 text-primary" : "text-on_surface hover:bg-white/5"
+                        isActive
+                          ? "bg-primary/20 text-primary"
+                          : "text-on_surface hover:bg-white/5",
                       )}
                     >
                       {section.label}
@@ -227,7 +243,11 @@ export const LiquidNav = ({
                         href={social.href}
                         className="px-3 py-2 rounded-lg bg-surface_container_highest/30 text-xs font-mono text-on_surface transition-colors hover:text-primary"
                         target={social.external ? "_blank" : undefined}
-                        rel={social.external ? "noopener noreferrer external" : undefined}
+                        rel={
+                          social.external
+                            ? "noopener noreferrer external"
+                            : undefined
+                        }
                       >
                         {social.label}
                       </a>
@@ -236,9 +256,9 @@ export const LiquidNav = ({
                 </div>
               )}
             </LiquidGlass>
-          </motion.div>
+          </m.div>
         )}
       </AnimatePresence>
-    </motion.header>
+    </m.header>
   );
 };

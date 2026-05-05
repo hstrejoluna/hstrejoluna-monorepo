@@ -1,7 +1,7 @@
 "use client";
 
 import React, { type MouseEvent, useState } from "react";
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence, m } from "framer-motion";
 
 import { LiquidGlass } from "../liquid-glass";
 
@@ -117,7 +117,7 @@ export const CommandSurface = ({
   };
 
   return (
-    <motion.header
+    <m.header
       data-testid="command-nav"
       data-hidden={shouldHide ? "true" : "false"}
       className={`fixed bottom-0 left-0 right-0 z-50 p-3 md:p-4 ${
@@ -140,7 +140,7 @@ export const CommandSurface = ({
             <span className="relative inline-flex h-2 w-2 rounded-full bg-primary" />
           </span>
           <AnimatePresence mode="popLayout">
-            <motion.span
+            <m.span
               key={activeId}
               initial={{ y: 10, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
@@ -148,7 +148,7 @@ export const CommandSurface = ({
               className="text-on_surface uppercase"
             >
               {label}
-            </motion.span>
+            </m.span>
           </AnimatePresence>
         </div>
 
@@ -214,7 +214,7 @@ export const CommandSurface = ({
 
       <AnimatePresence>
         {isMenuOpen && (
-          <motion.nav
+          <m.nav
             id="mobile-navigation-panel"
             aria-label={resolvedLabels.mobileSectionNavigationAria}
             className="relative z-10 mt-3 rounded border border-surface_container_highest bg-surface_container/95 p-4 lg:hidden"
@@ -274,9 +274,9 @@ export const CommandSurface = ({
                 </p>
               )}
             </div>
-          </motion.nav>
+          </m.nav>
         )}
       </AnimatePresence>
-    </motion.header>
+    </m.header>
   );
 };

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { motion } from "framer-motion";
+import { m } from "framer-motion";
 
 const cipherChars =
   "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_+-=[]{}|;:,.<>?/~`";
@@ -13,11 +13,11 @@ interface CipherTextProps {
   revealSpeed?: number;
 }
 
-export const CipherText = ({ 
-  text, 
-  delay = 0, 
-  duration = 1.5, 
-  revealSpeed
+export const CipherText = ({
+  text,
+  delay = 0,
+  duration = 1.5,
+  revealSpeed,
 }: CipherTextProps) => {
   const [displayedText, setDisplayedText] = useState("");
   const stepMs = useMemo(() => {
@@ -57,7 +57,7 @@ export const CipherText = ({
           const randomChar =
             cipherChars[Math.floor(Math.random() * cipherChars.length)];
           setDisplayedText(
-            (prev) => prev.substring(0, currentIndex) + randomChar
+            (prev) => prev.substring(0, currentIndex) + randomChar,
           );
           return;
         }
@@ -75,13 +75,13 @@ export const CipherText = ({
   }, [text, delay, stepMs]);
 
   return (
-    <motion.span
+    <m.span
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ delay: delay + 0.1 }}
       className="inline-block font-mono"
     >
       {displayedText}
-    </motion.span>
+    </m.span>
   );
 };

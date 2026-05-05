@@ -1,6 +1,6 @@
 "use client";
 
-import { motion, useMotionValue, useTransform, animate } from "framer-motion";
+import { m, useMotionValue, useTransform, animate } from "framer-motion";
 import { useRef } from "react";
 import type { MouseEvent, ReactNode } from "react";
 
@@ -17,17 +17,17 @@ export const MicroInteraction = ({
   const rectRef = useRef<DOMRect | null>(null);
   const x = useMotionValue(0);
   const y = useMotionValue(0);
-  
+
   const rotateX = useTransform(y, [-100, 100], [5, -5]);
   const rotateY = useTransform(x, [-100, 100], [-5, 5]);
-  
+
   const handleMouseMove = (e: MouseEvent<HTMLDivElement>) => {
     const rect = rectRef.current;
     if (!rect) return;
 
     const centerX = rect.left + rect.width / 2;
     const centerY = rect.top + rect.height / 2;
-    
+
     x.set(e.clientX - centerX);
     y.set(e.clientY - centerY);
   };
@@ -36,7 +36,7 @@ export const MicroInteraction = ({
     if (!ref.current) return;
     rectRef.current = ref.current.getBoundingClientRect();
   };
-  
+
   const handleMouseLeave = () => {
     rectRef.current = null;
     animate(x, 0, { duration: 0.5 });
@@ -44,7 +44,7 @@ export const MicroInteraction = ({
   };
 
   return (
-    <motion.div
+    <m.div
       ref={ref}
       onMouseEnter={handleMouseEnter}
       onMouseMove={handleMouseMove}
@@ -55,6 +55,6 @@ export const MicroInteraction = ({
       transition={{ type: "spring", stiffness: 300, damping: 20 }}
     >
       {children}
-    </motion.div>
+    </m.div>
   );
 };

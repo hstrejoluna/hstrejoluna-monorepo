@@ -1,7 +1,7 @@
 "use client";
 
-import React, { useMemo } from "react";
-import { motion } from "framer-motion";
+import { useMemo } from "react";
+import { m } from "framer-motion";
 import { Experience } from "@/types/sanity";
 import { GlitchText } from "@hstrejoluna/ui";
 import { TelemetryHUD } from "@hstrejoluna/ui";
@@ -55,7 +55,7 @@ export const ExperienceFragment = ({ experience }: ExperienceFragmentProps) => {
       {backgroundDecoration}
 
       <div className="w-full max-w-5xl z-10">
-        <motion.div
+        <m.div
           initial={{ opacity: 0, x: 20 }}
           whileInView={{ opacity: 1, x: 0 }}
           viewport={{ once: true }}
@@ -93,7 +93,7 @@ export const ExperienceFragment = ({ experience }: ExperienceFragmentProps) => {
             </span>
             {blockToPlainText(experience.description) || t("noLogEntry")}
           </div>
-        </motion.div>
+        </m.div>
       </div>
 
       {/* Side HUD Telemetry */}

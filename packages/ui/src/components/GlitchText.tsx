@@ -1,7 +1,5 @@
 "use client";
 
-import React from "react";
-import { motion } from "framer-motion";
 import { useReducedMotion } from "@hstrejoluna/ui";
 
 interface GlitchTextProps {
@@ -16,15 +14,16 @@ interface GlitchTextProps {
  * Implements a cinematic digital interference effect using CSS animations and chromatic aberration.
  * Respects 'prefers-reduced-motion' for accessibility.
  */
-export const GlitchText = ({ 
-  text, 
-  className = "", 
+export const GlitchText = ({
+  text,
+  className = "",
   as: Component = "span",
-  active = false 
+  active = false,
 }: GlitchTextProps) => {
   const isReducedMotion = useReducedMotion();
-  const glitchClass = "absolute top-0 left-0 w-full h-full opacity-0 pointer-events-none transition-opacity duration-100";
-  
+  const glitchClass =
+    "absolute top-0 left-0 w-full h-full opacity-0 pointer-events-none transition-opacity duration-100";
+
   // Only animate if reduced motion is NOT enabled
   const shouldAnimate = !isReducedMotion;
 
@@ -34,12 +33,10 @@ export const GlitchText = ({
       data-text={text}
     >
       {/* Main Text Layer */}
-      <span className="relative z-10 block">
-        {text}
-      </span>
+      <span className="relative z-10 block">{text}</span>
 
       {/* Cyan Glitch Layer (Aberration) */}
-      <span 
+      <span
         className={`
           ${glitchClass} 
           text-glitch-cyan 
@@ -55,7 +52,7 @@ export const GlitchText = ({
       </span>
 
       {/* Magenta Glitch Layer (Aberration) */}
-      <span 
+      <span
         className={`
           ${glitchClass} 
           text-glitch-magenta 
