@@ -67,10 +67,16 @@ test.describe("portfolio navigation behavior", () => {
 
     // aria-current depends on IntersectionObserver + React re-render after
     // smooth-scroll completes. Poll with generous timeout to absorb variance.
+    // Re-query locator inside poll — React re-render may replace the DOM node.
     await expect
-      .poll(() => certificatesNavLink.getAttribute("aria-current"), {
-        timeout: 10_000,
-      })
+      .poll(
+        () =>
+          page
+            .getByRole("button", { name: /^certificates$/i })
+            .first()
+            .getAttribute("aria-current"),
+        { timeout: 10_000 },
+      )
       .toBe("location");
 
     // Ensure the navigation stays visible (auto-hide is disabled)
