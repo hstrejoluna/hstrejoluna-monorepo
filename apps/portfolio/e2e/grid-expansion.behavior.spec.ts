@@ -121,6 +121,10 @@ test.describe("in-place expansion grids", () => {
     // Re-query before every action — AnimatePresence may detach nodes on page load.
     await experienceButtons.nth(0).scrollIntoViewIfNeeded();
     await experienceButtons.nth(0).click();
+
+    // AnimatePresence exit animation detaches/re-attaches DOM nodes.
+    // Wait for animation to complete before asserting.
+    await page.waitForTimeout(500);
     await expect(experienceButtons.nth(0)).toHaveAttribute(
       "aria-expanded",
       "true",
