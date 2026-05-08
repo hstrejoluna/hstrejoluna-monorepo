@@ -68,9 +68,6 @@ vi.mock("./fragments/HeroSection", () => ({
     </section>
   ),
 }));
-vi.mock("./fragments/ProjectsOverview", () => ({
-  ProjectsOverview: () => <div>Projects</div>,
-}));
 vi.mock("./fragments/ExperienceOverview", () => ({
   ExperienceOverview: () => <div>Experience</div>,
 }));

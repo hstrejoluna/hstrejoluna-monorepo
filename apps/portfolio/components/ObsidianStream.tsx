@@ -11,7 +11,6 @@ import {
   Certificate,
 } from "@/types/sanity";
 import { HeroSection } from "./fragments/HeroSection";
-import { ProjectsOverview } from "./fragments/ProjectsOverview";
 import { ExperienceOverview } from "./fragments/ExperienceOverview";
 import { SkillsOverview } from "./fragments/SkillsOverview";
 import { CertificatesOverview } from "./fragments/CertificatesOverview";
@@ -29,6 +28,7 @@ interface ObsidianStreamProps {
   skills: Skill[];
   experiences: Experience[];
   certificates: Certificate[];
+  projectsContent?: React.ReactNode;
 }
 
 interface StreamSectionProps {
@@ -69,6 +69,7 @@ export const ObsidianStream = ({
   skills,
   experiences,
   certificates,
+  projectsContent,
 }: ObsidianStreamProps) => {
   const tCommon = useTranslations("common");
   const tBrand = useTranslations("brand");
@@ -141,10 +142,7 @@ export const ObsidianStream = ({
             hideOnScroll={isNavigationHidden}
           />
 
-          <main
-            id="main-content"
-            className="relative z-10 flex flex-col w-full"
-          >
+          <div className="relative z-10 flex flex-col w-full">
             <HeroSection profile={profile} />
             <StreamSection
               id="projects"
@@ -153,7 +151,7 @@ export const ObsidianStream = ({
               title={tNav("projects").toUpperCase()}
               countLabel={`[${formatLabelCount(projects.length)}]`}
             >
-              <ProjectsOverview projects={projects} />
+              {projectsContent}
             </StreamSection>
             <StreamSection
               id="experience"
@@ -182,7 +180,7 @@ export const ObsidianStream = ({
             >
               <CertificatesOverview certificates={certificates} />
             </StreamSection>
-          </main>
+          </div>
 
           <div
             aria-hidden="true"
