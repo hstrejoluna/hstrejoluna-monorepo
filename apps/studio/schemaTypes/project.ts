@@ -20,7 +20,7 @@ export default defineType({
     }),
     defineField({
       name: "description",
-      title: "Short Description",
+      title: "Description (Portable Text)",
       type: "array",
       of: [{ type: "block" }],
     }),
@@ -94,7 +94,7 @@ export default defineType({
       name: "shortDescription",
       title: "SEO Short Description",
       description:
-        "Plain-text summary for SEO and card previews (max 200 characters). Falls back to Short Description field if empty.",
+        "Plain-text summary for SEO and card previews (max 200 characters). Falls back to Description (Portable Text) if empty.",
       type: "string",
       validation: (Rule) => Rule.max(200),
     }),

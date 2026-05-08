@@ -44,7 +44,7 @@ export function buildPersonJsonLd({
   if (profile?.image) {
     image = urlFor(profile.image).width(1200).height(630).url();
   } else {
-    image = FALLBACK_IMAGE;
+    image = `${SITE_URL}${FALLBACK_IMAGE}`;
   }
 
   return {
@@ -99,32 +99,34 @@ export function buildProjectListJsonLd({
   projects,
   locale,
 }: BuildProjectListJsonLdParams): ItemListJsonLd {
-  const itemListElement: ListItemJsonLd[] = projects.map((project, index) => {
-    const path = project.slug?.current
-      ? `/projects/${project.slug.current}`
-      : project.micrositePath || "#";
+  const validProjects = projects.filter((p) => p.slug?.current);
 
-    const image = project.image
-      ? urlFor(project.image).width(1200).height(630).url()
-      : FALLBACK_IMAGE;
+  const itemListElement: ListItemJsonLd[] = validProjects.map(
+    (project, index) => {
+      const path = `/projects/${project.slug!.current}`;
 
-    const description =
-      project.shortDescription && project.shortDescription.length > 0
-        ? project.shortDescription
-        : blockToPlainText(project.description);
+      const image = project.image
+        ? urlFor(project.image).width(1200).height(630).url()
+        : `${SITE_URL}${FALLBACK_IMAGE}`;
 
-    return {
-      "@type": "ListItem",
-      position: index + 1,
-      item: {
-        "@type": "CreativeWork",
-        name: project.title,
-        url: `${SITE_URL}/${locale}${path}`,
-        description,
-        image,
-      },
-    };
-  });
+      const description =
+        project.shortDescription && project.shortDescription.length > 0
+          ? project.shortDescription
+          : blockToPlainText(project.description);
+
+      return {
+        "@type": "ListItem",
+        position: index + 1,
+        item: {
+          "@type": "CreativeWork",
+          name: project.title,
+          url: `${SITE_URL}/${locale}${path}`,
+          description,
+          image,
+        },
+      };
+    },
+  );
 
   return {
     "@context": "https://schema.org",

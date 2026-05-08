@@ -63,7 +63,7 @@ page.tsx (RSC)
 | `apps/studio/schemaTypes/project.ts`                              | **Modify**    | Add three new `defineField` entries: `shortDescription` (string, max 200), `seoKeywords` (string array), `category` (string) |
 | `apps/portfolio/app/globals.css`                                  | **Modify**    | Remove `.grid-with-life` block (lines 236-270), `grid-pulse` keyframe (lines 224-233), `scanline` keyframe (lines 291-298)   |
 | `apps/portfolio/messages/en.json`                                 | **Modify**    | Add `projectsGrid.viewCaseStudy`; remove `portfolioGrid.*` refs after audit                                                  |
-| `apps/portfolio/messages/es.json`                                 | **Modify**    | Add `projectsGrid.viewCaseStudy: "VER_CASO_DE_ESTUDIO"`; remove `portfolioGrid.*` refs after audit                           |
+| `apps/portfolio/messages/es.json`                                 | **Modify**    | Add `projectsGrid.viewCaseStudy: "Ver Caso de Estudio"`; remove `portfolioGrid.*` refs after audit                           |
 | `apps/portfolio/e2e/grid-expansion.behavior.spec.ts`              | **Delete**    | In-place expansion tests no longer applicable                                                                                |
 | `apps/portfolio/e2e/project-grid-seo.spec.ts`                     | **Create**    | New E2E: semantic HTML validation, case study navigation, axe-core accessibility, JSON-LD presence                           |
 

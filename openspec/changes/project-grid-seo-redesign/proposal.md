@@ -14,7 +14,7 @@ The current project grid (`ProjectsOverview`) is a `"use client"` component usin
 - Remove dead code: `PortfolioGrid.tsx`, `ProjectFragment.tsx`, related tests/stories
 - Remove `.grid-with-life` CSS animations from `globals.css`
 - Fix duplicate `<main id="main-content">`: remove from `ObsidianStream.tsx`
-- Sanity schema: add `shortDescription` (string, max 200), `seoKeywords` (string array), `category` (enum)
+- Sanity schema: add `shortDescription` (string, max 200), `seoKeywords` (string array), `category` (string)
 - Extend TypeScript `Project` interface; update GROQ query
 - Project page metadata: prefer `shortDescription` (fallback: `blockToPlainText`)
 - i18n: add `projectsGrid.*` namespace; update en/es messages

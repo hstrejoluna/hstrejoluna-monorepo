@@ -106,7 +106,7 @@ describe("buildPersonJsonLd", () => {
       expect(image).toContain("2000x3000");
     });
 
-    it("falls back to /og-image.png when profile has no image", () => {
+    it("falls back to absolute og-image.png when profile has no image", () => {
       const result = buildPersonJsonLd({
         profile: { ...DEFAULT_PROFILE, image: undefined },
         skills: DEFAULT_SKILLS,
@@ -114,7 +114,7 @@ describe("buildPersonJsonLd", () => {
       });
 
       const image = result.image as string;
-      expect(image).toBe("/og-image.png");
+      expect(image).toBe("https://hstrejoluna.com/og-image.png");
     });
 
     it("falls back when profile is null", () => {
@@ -125,7 +125,7 @@ describe("buildPersonJsonLd", () => {
       });
 
       const image = result.image as string;
-      expect(image).toBe("/og-image.png");
+      expect(image).toBe("https://hstrejoluna.com/og-image.png");
     });
   });
 
@@ -333,7 +333,7 @@ describe("buildProjectListJsonLd", () => {
       });
 
       const image = result.itemListElement[0].item.image as string;
-      expect(image).toBe("/og-image.png");
+      expect(image).toBe("https://hstrejoluna.com/og-image.png");
     });
   });
 
@@ -360,7 +360,7 @@ describe("buildProjectListJsonLd", () => {
       );
     });
 
-    it("falls back to micrositePath when slug is missing", () => {
+    it("excludes projects without a valid slug from ItemList", () => {
       const result = buildProjectListJsonLd({
         projects: [
           {
@@ -369,12 +369,21 @@ describe("buildProjectListJsonLd", () => {
             description: "Microsite project",
             micrositePath: "/custom-path",
           },
+          {
+            _id: "proj-5",
+            title: "Valid Project",
+            slug: { current: "valid-project" },
+            description: "A valid project",
+          },
         ],
         locale: "en",
       });
 
+      // Only the project with a valid slug is included
+      expect(result.itemListElement).toHaveLength(1);
+      expect(result.itemListElement[0].item.name).toBe("Valid Project");
       expect(result.itemListElement[0].item.url).toBe(
-        "https://hstrejoluna.com/en/custom-path",
+        "https://hstrejoluna.com/en/projects/valid-project",
       );
     });
 

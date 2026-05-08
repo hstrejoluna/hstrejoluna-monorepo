@@ -4,6 +4,9 @@
 **Version**: N/A (initial implementation)
 **Mode**: Strict TDD
 **Date**: 2026-05-08
+**Delivery**: Stacked PRs (#69: Foundation + Component, #70: Wiring + Cleanup)
+
+This report covers the full change scope across both stacked PRs. PR #69 contains the foundation pieces (types, schema, i18n, JSON-LD, ProjectsGrid component). PR #70 contains the wiring, sitemap, metadata, CSS cleanup, dead code removal, and E2E tests.
 
 ---
 
