@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { buildPersonJsonLd } from "./json-ld";
+import { buildPersonJsonLd, buildProjectListJsonLd } from "./json-ld";
+import type { Project } from "@/types/sanity";
 
 const DEFAULT_PROFILE = {
   name: "Héctor Trejo Luna",
@@ -105,7 +106,7 @@ describe("buildPersonJsonLd", () => {
       expect(image).toContain("2000x3000");
     });
 
-    it("falls back to /og-image.png when profile has no image", () => {
+    it("falls back to absolute og-image.png when profile has no image", () => {
       const result = buildPersonJsonLd({
         profile: { ...DEFAULT_PROFILE, image: undefined },
         skills: DEFAULT_SKILLS,
@@ -113,7 +114,7 @@ describe("buildPersonJsonLd", () => {
       });
 
       const image = result.image as string;
-      expect(image).toBe("/og-image.png");
+      expect(image).toBe("https://hstrejoluna.com/og-image.png");
     });
 
     it("falls back when profile is null", () => {
@@ -124,7 +125,7 @@ describe("buildPersonJsonLd", () => {
       });
 
       const image = result.image as string;
-      expect(image).toBe("/og-image.png");
+      expect(image).toBe("https://hstrejoluna.com/og-image.png");
     });
   });
 
@@ -181,6 +182,246 @@ describe("buildPersonJsonLd", () => {
       });
 
       expect(result.description).toBeNull();
+    });
+  });
+});
+
+// --- buildProjectListJsonLd tests ---
+
+const MOCK_PROJECTS: Project[] = [
+  {
+    _id: "proj-1",
+    title: "Dark Kinetic Portfolio",
+    slug: { current: "dark-kinetic" },
+    description: "A portfolio site built with Next.js",
+    shortDescription: "Next.js portfolio with SEO optimization",
+    seoKeywords: ["nextjs", "portfolio", "seo"],
+    category: "web",
+    image: {
+      asset: {
+        _ref: "image-abc123-800x600-jpg",
+        _type: "reference" as const,
+      },
+      alt: "Dark Kinetic screenshot",
+    },
+  },
+  {
+    _id: "proj-2",
+    title: "Maestros del Salmón",
+    slug: { current: "maestros-del-salmon" },
+    description: [
+      {
+        _type: "block",
+        children: [
+          { _type: "span", text: "A culinary experience site", marks: [] },
+        ],
+      },
+    ],
+    // shortDescription intentionally undefined — tests fallback
+    seoKeywords: ["food", "culinary"],
+    category: "microsite",
+    micrositePath: "/maestros-del-salmon",
+    // image intentionally undefined — tests fallback
+  },
+];
+
+describe("buildProjectListJsonLd", () => {
+  describe("ItemList structure", () => {
+    it("returns a valid ItemList with @context and @type", () => {
+      const result = buildProjectListJsonLd({
+        projects: MOCK_PROJECTS,
+        locale: "en",
+      });
+
+      expect(result["@context"]).toBe("https://schema.org");
+      expect(result["@type"]).toBe("ItemList");
+    });
+
+    it("includes itemListElement array with correct length", () => {
+      const result = buildProjectListJsonLd({
+        projects: MOCK_PROJECTS,
+        locale: "en",
+      });
+
+      expect(result.itemListElement).toHaveLength(2);
+      expect(result.itemListElement[0]["@type"]).toBe("ListItem");
+    });
+
+    it("includes position starting at 1 for each ListItem", () => {
+      const result = buildProjectListJsonLd({
+        projects: MOCK_PROJECTS,
+        locale: "en",
+      });
+
+      expect(result.itemListElement[0].position).toBe(1);
+      expect(result.itemListElement[1].position).toBe(2);
+    });
+  });
+
+  describe("CreativeWork entries", () => {
+    it("includes name from project.title", () => {
+      const result = buildProjectListJsonLd({
+        projects: MOCK_PROJECTS,
+        locale: "en",
+      });
+
+      expect(result.itemListElement[0].item.name).toBe(
+        "Dark Kinetic Portfolio",
+      );
+      expect(result.itemListElement[1].item.name).toBe("Maestros del Salmón");
+    });
+
+    it("includes url with locale-aware project path via slug", () => {
+      const result = buildProjectListJsonLd({
+        projects: MOCK_PROJECTS,
+        locale: "en",
+      });
+
+      expect(result.itemListElement[0].item.url).toBe(
+        "https://hstrejoluna.com/en/projects/dark-kinetic",
+      );
+      expect(result.itemListElement[1].item.url).toBe(
+        "https://hstrejoluna.com/en/projects/maestros-del-salmon",
+      );
+    });
+
+    it("includes description from shortDescription when available", () => {
+      const result = buildProjectListJsonLd({
+        projects: MOCK_PROJECTS,
+        locale: "en",
+      });
+
+      expect(result.itemListElement[0].item.description).toBe(
+        "Next.js portfolio with SEO optimization",
+      );
+    });
+
+    it("falls back to blockToPlainText when shortDescription is missing", () => {
+      const result = buildProjectListJsonLd({
+        projects: MOCK_PROJECTS,
+        locale: "en",
+      });
+
+      // proj-2 has no shortDescription, so it falls back to Portable Text extraction
+      expect(result.itemListElement[1].item.description).toBe(
+        "A culinary experience site",
+      );
+    });
+
+    it("includes image from Sanity CDN via urlFor when project.image exists", () => {
+      const result = buildProjectListJsonLd({
+        projects: MOCK_PROJECTS,
+        locale: "en",
+      });
+
+      const image = result.itemListElement[0].item.image as string;
+      expect(image).toContain("cdn.sanity.io");
+      expect(image).toContain("abc123");
+    });
+
+    it("uses fallback image when project has no image", () => {
+      const result = buildProjectListJsonLd({
+        projects: [
+          {
+            _id: "proj-3",
+            title: "No Image Project",
+            slug: { current: "no-image" },
+            description: "No image available",
+          },
+        ],
+        locale: "en",
+      });
+
+      const image = result.itemListElement[0].item.image as string;
+      expect(image).toBe("https://hstrejoluna.com/og-image.png");
+    });
+  });
+
+  describe("edge cases", () => {
+    it("handles empty projects array", () => {
+      const result = buildProjectListJsonLd({
+        projects: [],
+        locale: "en",
+      });
+
+      expect(result["@context"]).toBe("https://schema.org");
+      expect(result["@type"]).toBe("ItemList");
+      expect(result.itemListElement).toEqual([]);
+    });
+
+    it("uses es locale in URLs when locale is es", () => {
+      const result = buildProjectListJsonLd({
+        projects: [MOCK_PROJECTS[0]],
+        locale: "es",
+      });
+
+      expect(result.itemListElement[0].item.url).toBe(
+        "https://hstrejoluna.com/es/projects/dark-kinetic",
+      );
+    });
+
+    it("excludes projects without a valid slug from ItemList", () => {
+      const result = buildProjectListJsonLd({
+        projects: [
+          {
+            _id: "proj-4",
+            title: "Microsite Only",
+            description: "Microsite project",
+            micrositePath: "/custom-path",
+          },
+          {
+            _id: "proj-5",
+            title: "Valid Project",
+            slug: { current: "valid-project" },
+            description: "A valid project",
+          },
+        ],
+        locale: "en",
+      });
+
+      // Only the project with a valid slug is included
+      expect(result.itemListElement).toHaveLength(1);
+      expect(result.itemListElement[0].item.name).toBe("Valid Project");
+      expect(result.itemListElement[0].item.url).toBe(
+        "https://hstrejoluna.com/en/projects/valid-project",
+      );
+    });
+
+    it("handles project with empty string shortDescription", () => {
+      const result = buildProjectListJsonLd({
+        projects: [
+          {
+            _id: "proj-5",
+            title: "Empty Short Desc",
+            slug: { current: "empty-desc" },
+            description: [
+              {
+                _type: "block",
+                children: [
+                  { _type: "span", text: "Long form description", marks: [] },
+                ],
+              },
+            ],
+            shortDescription: "",
+          },
+        ],
+        locale: "en",
+      });
+
+      // Empty string is falsy, so should fall back to blockToPlainText
+      expect(result.itemListElement[0].item.description).toBe(
+        "Long form description",
+      );
+    });
+
+    it("includes @type CreativeWork on each item", () => {
+      const result = buildProjectListJsonLd({
+        projects: MOCK_PROJECTS,
+        locale: "en",
+      });
+
+      expect(result.itemListElement[0].item["@type"]).toBe("CreativeWork");
+      expect(result.itemListElement[1].item["@type"]).toBe("CreativeWork");
     });
   });
 });
