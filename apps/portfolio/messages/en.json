@@ -15,12 +15,7 @@
       "viewCredential": "View Credential"
     },
     "portfolioGrid": {
-      "activeNodes": "ACTIVE_NODES",
-      "status": "Available for new challenges",
-      "about": "About",
-      "latestWork": "Latest Work",
-      "exploreProject": "Explore Project",
-      "caseStudy": "CASE STUDY"
+      "activeNodes": "ACTIVE_NODES"
     },
     "projects": {
       "clickToExpand": "[CLICK_TO_EXPAND]",
@@ -82,6 +77,9 @@
     "title": "{name} | Senior Software Architect",
     "ogTitle": "{name} | Obsidian Command Portfolio",
     "description": "Portfolio of {name} — Senior Software Architect specializing in clean architecture, performance engineering, and immersive digital experiences."
+  },
+  "projectsGrid": {
+    "viewCaseStudy": "View Case Study"
   },
   "brand": {
     "systemOverride": "SYSTEM_OVERRIDE",

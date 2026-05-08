@@ -11,6 +11,7 @@ const REQUIRED_NAMESPACES = [
   "brand",
   "legal",
   "fragments",
+  "projectsGrid",
 ] as const;
 
 describe("messages/en.json", () => {

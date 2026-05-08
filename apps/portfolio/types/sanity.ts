@@ -54,6 +54,12 @@ export interface Project {
   micrositePath?: string;
   externalLink?: string;
   isFeatured?: boolean;
+  /** Plain-text SEO description, max 200 characters */
+  shortDescription?: string;
+  /** SEO keywords for meta tags */
+  seoKeywords?: string[];
+  /** Project category */
+  category?: string;
 }
 
 export interface Experience {

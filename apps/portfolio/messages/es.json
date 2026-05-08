@@ -15,12 +15,7 @@
       "viewCredential": "Ver Credencial"
     },
     "portfolioGrid": {
-      "activeNodes": "NODOS_ACTIVOS",
-      "status": "Disponible para nuevos desafíos",
-      "about": "Sobre mí",
-      "latestWork": "Último Trabajo",
-      "exploreProject": "Explorar Proyecto",
-      "caseStudy": "CASO DE ESTUDIO"
+      "activeNodes": "NODOS_ACTIVOS"
     },
     "projects": {
       "clickToExpand": "[CLIC_PARA_EXPANDIR]",
@@ -82,6 +77,9 @@
     "title": "{name} | Arquitecto de Software Senior",
     "ogTitle": "{name} | Portfolio Obsidian Command",
     "description": "Portfolio de {name} — Arquitecto de Software Senior especializado en arquitectura limpia, ingeniería de rendimiento y experiencias digitales inmersivas."
+  },
+  "projectsGrid": {
+    "viewCaseStudy": "Ver Caso de Estudio"
   },
   "brand": {
     "systemOverride": "SYSTEM_OVERRIDE",
