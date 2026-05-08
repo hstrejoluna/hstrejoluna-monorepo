@@ -36,7 +36,9 @@ export async function generateStaticParams() {
   }
 }
 
-export async function generateMetadata({ params }: ProjectPageProps): Promise<Metadata> {
+export async function generateMetadata({
+  params,
+}: ProjectPageProps): Promise<Metadata> {
   const { locale, slug } = await params;
   const project = await getProject(slug);
   const [tSeo, tCommon] = await Promise.all([
@@ -46,7 +48,14 @@ export async function generateMetadata({ params }: ProjectPageProps): Promise<Me
 
   if (!project) return {};
 
-  const description = blockToPlainText(project.description);
+  const descriptionRaw =
+    project.shortDescription && project.shortDescription.length > 0
+      ? project.shortDescription
+      : blockToPlainText(project.description);
+  const description =
+    descriptionRaw.length > 160
+      ? descriptionRaw.slice(0, 157) + "..."
+      : descriptionRaw;
   const name = tCommon("fullName") || AUTHOR_NAME;
 
   return {
@@ -82,7 +91,7 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
   const [project, t, tCommon] = await Promise.all([
     getProject(slug),
     getTranslations({ locale, namespace: "fragments.project" }),
-    getTranslations({ locale, namespace: "common" })
+    getTranslations({ locale, namespace: "common" }),
   ]);
 
   if (!project) {
@@ -94,28 +103,33 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": ["SoftwareSourceCode", "CreativeWork"],
-    "name": project.title,
-    "description": blockToPlainText(project.description),
-    "genre": "Software Development",
-    "author": {
+    name: project.title,
+    description:
+      project.shortDescription && project.shortDescription.length > 0
+        ? project.shortDescription
+        : blockToPlainText(project.description),
+    genre: "Software Development",
+    author: {
       "@type": "Person",
-      "name": authorName
+      name: authorName,
     },
-    "datePublished": project.year,
-    "programmingLanguage": project.techStack?.filter(Boolean).map(s => s.name),
-    "codeRepository": project.externalLink?.includes('github.com') ? project.externalLink : undefined,
-    "url": project.externalLink,
+    datePublished: project.year,
+    programmingLanguage: project.techStack?.filter(Boolean).map((s) => s.name),
+    codeRepository: project.externalLink?.includes("github.com")
+      ? project.externalLink
+      : undefined,
+    url: project.externalLink,
   };
 
   const breadcrumbs = [
     { label: t("home"), href: "/" },
     { label: t("projects"), href: "/#projects" },
-    { label: project.title, isCurrent: true }
+    { label: project.title, isCurrent: true },
   ];
 
   const renderContent = (
-    content: PortableTextBlock[] | undefined, 
-    description: string | PortableTextBlock[] | undefined
+    content: PortableTextBlock[] | undefined,
+    description: string | PortableTextBlock[] | undefined,
   ): PortableTextBlock[] => {
     if (Array.isArray(content)) return content;
     if (Array.isArray(description)) return description;
@@ -134,16 +148,18 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 mt-12">
           <header className="lg:col-span-12">
-            <TelemetryHUD 
+            <TelemetryHUD
               identifier={project.slug?.current || "PROJECT_UPLINK"}
               status="STABLE"
-              techStack={project.techStack?.filter(Boolean).map(s => s.name) || []}
+              techStack={
+                project.techStack?.filter(Boolean).map((s) => s.name) || []
+              }
               className="mb-8"
             />
             <h1 className="text-6xl md:text-8xl font-black uppercase tracking-tighter italic leading-none mb-8">
               {project.title}
             </h1>
-            
+
             <div className="flex flex-wrap gap-12 border-y border-white/10 py-8 text-label-sm font-mono uppercase tracking-[0.2em] text-on_surface_variant">
               {project.role && (
                 <div>
@@ -160,15 +176,20 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
               {project.externalLink && (
                 <div>
                   <span className="block opacity-40 mb-2">
-                    {project.externalLink.includes('github.com') ? t("viewGitHub") : t("visitSite")}
+                    {project.externalLink.includes("github.com")
+                      ? t("viewGitHub")
+                      : t("visitSite")}
                   </span>
-                  <a 
-                    href={project.externalLink} 
-                    target="_blank" 
+                  <a
+                    href={project.externalLink}
+                    target="_blank"
                     rel="noopener noreferrer external"
                     className="text-primary font-bold hover:text-white transition-colors"
                   >
-                    {project.externalLink.replace(/^https?:\/\//, '').replace(/\/$/, '')} ↗
+                    {project.externalLink
+                      .replace(/^https?:\/\//, "")
+                      .replace(/\/$/, "")}{" "}
+                    ↗
                   </a>
                 </div>
               )}
@@ -192,12 +213,16 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
             )}
 
             <div className="prose prose-invert prose-lg max-w-none prose-headings:font-black prose-headings:uppercase prose-headings:italic prose-headings:tracking-tighter prose-p:text-on_surface_variant prose-p:font-light prose-strong:text-white prose-a:text-primary">
-              <PortableText value={renderContent(project.content, project.description)} />
+              <PortableText
+                value={renderContent(project.content, project.description)}
+              />
             </div>
 
             {project.gallery && project.gallery.length > 0 && (
               <div className="space-y-8">
-                <h2 className="text-4xl font-black uppercase italic tracking-tighter">{t("gallery")}</h2>
+                <h2 className="text-4xl font-black uppercase italic tracking-tighter">
+                  {t("gallery")}
+                </h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {project.gallery.map((img, idx) => (
                     <LiquidGlass
@@ -221,7 +246,9 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
 
           <aside className="lg:col-span-4 space-y-12">
             <LiquidGlass variant="panel" className="p-8 border border-white/5">
-              <h3 className="text-2xl font-black uppercase italic tracking-tighter mb-6">{t("techStack")}</h3>
+              <h3 className="text-2xl font-black uppercase italic tracking-tighter mb-6">
+                {t("techStack")}
+              </h3>
               <div className="flex flex-wrap gap-3">
                 {project.techStack?.filter(Boolean).map((skill) => (
                   <LiquidGlass

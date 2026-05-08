@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { cache } from "react";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { safeJsonLd } from "@/lib/safe-json-ld";
-import { buildPersonJsonLd } from "@/lib/json-ld";
+import { buildPersonJsonLd, buildProjectListJsonLd } from "@/lib/json-ld";
 import { client } from "@/lib/sanity";
 import {
   Profile,
@@ -12,12 +12,13 @@ import {
   Certificate,
 } from "@/types/sanity";
 import { ObsidianStream } from "@/components/ObsidianStream";
+import { ProjectsGrid } from "@/components/ProjectsGrid";
 
 export const dynamic = "force-dynamic";
 
 const profileQuery = '*[_type == "profile"][0]';
 const projectsQuery =
-  '*[_type == "project"] | order(isFeatured desc, _createdAt desc) { ..., techStack[]-> }';
+  '*[_type == "project"] | order(isFeatured desc, _createdAt desc) { ..., "shortDescription": shortDescription, "seoKeywords": seoKeywords, "category": category, techStack[]-> }';
 const skillsQuery = '*[_type == "skill"] | order(proficiency desc)';
 const experiencesQuery = '*[_type == "experience"] | order(startDate desc)';
 const certificatesQuery =
@@ -89,11 +90,21 @@ export default async function PortfolioPage({
     locale,
   });
 
+  const projectListJsonLd = buildProjectListJsonLd({
+    projects,
+    locale,
+  });
+
   return (
     <>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: safeJsonLd(jsonLd) }}
+      />
+
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: safeJsonLd(projectListJsonLd) }}
       />
 
       <ObsidianStream
@@ -102,6 +113,7 @@ export default async function PortfolioPage({
         skills={skills}
         experiences={experiences}
         certificates={certificates}
+        projectsContent={<ProjectsGrid projects={projects} locale={locale} />}
       />
     </>
   );
