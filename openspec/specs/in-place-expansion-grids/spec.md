@@ -2,7 +2,9 @@
 
 ## Purpose
 
-Defines the requirements for rendering categorized content (Projects, Experience, Skills) in responsive grids that can dynamically expand selected rows to reveal highly detailed nested interfaces without triggering a new URL or overlay modal.
+Defines the requirements for rendering categorized content (Experience, Skills) in responsive grids that can dynamically expand selected rows to reveal highly detailed nested interfaces without triggering a new URL or overlay modal.
+
+> **Note (2026-05-08)**: The Projects grid has been superseded by `project-grid-seo` (Server Component, semantic HTML, case study links). This spec now applies only to Experience and Skills sections.
 
 ## Requirements
 
@@ -11,7 +13,8 @@ Defines the requirements for rendering categorized content (Projects, Experience
 The system MUST utilize efficient animation strategies (e.g., `LazyMotion`, CSS transitions) and minimize the use of heavy, nested DOM elements for layout and visual effects to ensure high performance and smooth browser scrolling.
 
 #### Scenario: Rendering overview items
-- GIVEN the Projects overview grid is rendered
+
+- GIVEN an overview grid (Experience or Skills) is rendered
 - WHEN the user scrolls through the grid or hovers over items
 - THEN the browser MUST maintain a steady 60fps frame rate
 - AND visual effects (like glitch or noise) MUST be handled via lightweight CSS or optimized SVG backgrounds instead of heavy React element trees.
@@ -21,13 +24,15 @@ The system MUST utilize efficient animation strategies (e.g., `LazyMotion`, CSS 
 The system MUST lay out content nodes in a CSS grid structure varying from 1 to 3 columns depending on device breakpoint viewport size.
 
 #### Scenario: Mobile grid scaling
+
 - GIVEN a mobile viewport (`< 768px`)
-- WHEN the Projects overview grid is rendered
+- WHEN an overview grid (Experience or Skills) is rendered
 - THEN it MUST present 1 unified column of items
 
 #### Scenario: Desktop grid scaling
+
 - GIVEN a desktop viewport (`>= 1024px`)
-- WHEN the Projects overview grid is rendered
+- WHEN an overview grid (Experience or Skills) is rendered
 - THEN it MUST present 3 unified columns of items
 
 ### Requirement: In-Place Expansion Unrolling
@@ -36,6 +41,7 @@ The system MUST expand the detail view directly underneath the clicked target, t
 (Previously: The system MUST expand the detail view directly underneath the clicked target, temporarily displacing subsequent siblings without overlapping.)
 
 #### Scenario: Selection expansion
+
 - GIVEN a grid of items
 - WHEN a user clicks on an unexpanded item "A"
 - THEN item "A" MUST set its state to expanded, revealing a sub-panel
@@ -47,6 +53,7 @@ The system MUST expand the detail view directly underneath the clicked target, t
 The system SHOULD automatically collapse previously expanded items within the same category to maintain scroll sanity when a new item is selected.
 
 #### Scenario: Selecting consecutive items
+
 - GIVEN item "A" is currently expanded
 - WHEN a user clicks on item "B" in the same exact grid
 - THEN item "A" MUST unconditionally collapse back to an atomic overview state
