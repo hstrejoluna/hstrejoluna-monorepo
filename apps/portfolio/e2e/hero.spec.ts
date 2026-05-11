@@ -38,8 +38,8 @@ test.describe("Hero — Liquid Glass (e2e)", () => {
     const heroSection = page.locator('section[aria-labelledby="hero-title"]');
     await expect(heroSection).toBeVisible();
 
-    // Give dynamic() time to resolve (capability gate should reject mobile)
-    await page.waitForTimeout(2000);
+    // Give ObsidianStream + dynamic() time to resolve (capability gate should reject mobile)
+    await page.waitForTimeout(5000);
 
     // No canvas should appear — capability gate excludes < 1024px
     await expect(heroSection.locator("canvas")).toHaveCount(0);

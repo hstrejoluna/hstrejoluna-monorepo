@@ -19,6 +19,12 @@ test.describe("portfolio navigation behavior", () => {
 
     await page.goto("/");
 
+    // Wait for async ObsidianStream to load (sections rendered dynamically)
+    await page.waitForSelector("#projects", {
+      state: "attached",
+      timeout: 30000,
+    });
+
     await page.evaluate(() => {
       const el = document.getElementById("projects");
       if (el) {

@@ -61,6 +61,12 @@ test.describe("Project Grid — SEO & Semantic HTML", () => {
   test("heading hierarchy does not skip levels", async ({ page }) => {
     await page.goto("/");
 
+    // Wait for async ObsidianStream to load (#projects rendered dynamically)
+    await page.waitForSelector("#projects", {
+      state: "attached",
+      timeout: 30000,
+    });
+
     // Collect heading levels in DOM order within the projects section
     const headings = await page
       .locator(
@@ -140,6 +146,12 @@ test.describe("Project Grid — SEO & Semantic HTML", () => {
     page,
   }) => {
     await page.goto("/");
+
+    // Wait for async ObsidianStream to load
+    await page.waitForSelector("#projects", {
+      state: "attached",
+      timeout: 30000,
+    });
 
     // Wait for articles to be present
     const articles = page.locator("article");

@@ -63,6 +63,11 @@ export const HeroText = async ({ profile, locale }: HeroTextProps) => {
         </div>
       </div>
 
+      {/* Portal mount point — HeroLiquidField renders here via createPortal
+          from ObsidianStream, replacing the static CSS blobs with the full
+          animated/WebGL liquid glass visual. */}
+      <div id="hero-visual-mount" aria-hidden="true" />
+
       {/* Static visual placeholder — pure CSS, zero JS.
           Replaced by HeroLiquidField's WebGL canvas on capable devices
           once the client bundle loads. */}

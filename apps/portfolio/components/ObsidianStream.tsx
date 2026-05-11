@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useMemo } from "react";
+import { createPortal } from "react-dom";
 import { useReducedMotion } from "@hstrejoluna/ui";
 import { useActiveSection } from "@/hooks/useActiveSection";
 import {
@@ -11,6 +12,7 @@ import {
   Certificate,
 } from "@/types/sanity";
 import { HeroSection } from "./fragments/HeroSection";
+import { HeroLiquidField } from "./fragments/HeroLiquidField";
 import { ExperienceOverview } from "./fragments/ExperienceOverview";
 import { SkillsOverview } from "./fragments/SkillsOverview";
 import { CertificatesOverview } from "./fragments/CertificatesOverview";
@@ -96,6 +98,15 @@ export const ObsidianStream = ({
 
   return (
     <div className="relative bg-background w-full min-h-screen font-sans overflow-x-hidden">
+      {/* Portal: mount HeroLiquidField into HeroText's SSR section#hero
+          so the WebGL canvas overlays the static blobs once ObsidianStream loads. */}
+      {skipHero &&
+        typeof document !== "undefined" &&
+        document.getElementById("hero-visual-mount") &&
+        createPortal(
+          <HeroLiquidField />,
+          document.getElementById("hero-visual-mount")!,
+        )}
       <m.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
