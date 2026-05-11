@@ -39,13 +39,6 @@ vi.mock("next/link", () => ({
   ),
 }));
 
-// Mock the client child component
-vi.mock("./HeroLiquidField", () => ({
-  HeroLiquidField: () => (
-    <div data-testid="hero-liquid-field">HeroLiquidField</div>
-  ),
-}));
-
 import { HeroSection } from "./HeroSection";
 import type { Profile } from "@/types/sanity";
 
@@ -114,11 +107,6 @@ describe("HeroSection — Semantic SSR shell (REQ liquid-glass-hero)", () => {
     expect(secondaryCta).toHaveAttribute("rel", "noopener noreferrer");
   });
 
-  it("renders the HeroLiquidField client component", () => {
-    render(<HeroSection profile={null} />);
-    expect(screen.getByTestId("hero-liquid-field")).toBeInTheDocument();
-  });
-
   it("all visible copy comes from the hero messages namespace (i18n)", () => {
     render(<HeroSection profile={null} />);
     // h1 text from messages (rendered as single text node: "Name — Role")
@@ -179,5 +167,33 @@ describe("HeroSection — Sanity profile fallback (non-h1 paths only)", () => {
     // profile.name ("Héctor Trejo Luna") happens to match, but the test
     // verifies the h1 text comes from the mock messages, not from the prop.
     // If profile.name were aliased to h1, changing the mock would break it.
+  });
+});
+
+describe("HeroSection — Post-cleanup: zero WebGL / HeroLiquidField", () => {
+  it("renders zero <canvas> elements (HeroLiquidWebGL removed in PR1)", () => {
+    const { container } = render(<HeroSection profile={null} />);
+    const canvases = container.querySelectorAll("canvas");
+    expect(canvases).toHaveLength(0);
+  });
+
+  it("renders no portal mount points or HeroLiquidField fragments", () => {
+    const { container } = render(<HeroSection profile={null} />);
+    const portalMounts = container.querySelectorAll(
+      "[id*='visual-mount'], [id*='portal'], [id*='liquid']",
+    );
+    expect(portalMounts).toHaveLength(0);
+  });
+
+  it("hero visual layer is pure CSS blobs, zero JS runtime", () => {
+    const { container } = render(<HeroSection profile={null} />);
+    // No script elements embedded in the hero
+    const scripts = container.querySelectorAll("script");
+    expect(scripts).toHaveLength(0);
+    // No WebGL attributes on any element
+    const webglElements = container.querySelectorAll(
+      "[data-webgl], [data-three], [data-r3f]",
+    );
+    expect(webglElements).toHaveLength(0);
   });
 });

@@ -27,7 +27,11 @@ vi.mock("next-intl", () => ({
     locale: string;
     messages: Record<string, unknown>;
   }) => (
-    <div data-testid="intl-provider" data-locale={locale} data-messages={JSON.stringify(messages)}>
+    <div
+      data-testid="intl-provider"
+      data-locale={locale}
+      data-messages={JSON.stringify(messages)}
+    >
       {children}
     </div>
   ),
@@ -44,23 +48,13 @@ vi.mock("../../components/fragments/CookieBanner", () => ({
 
 vi.mock("../../components/tracking/GoogleTagManager", () => ({
   default: ({ gtmId }: { gtmId: string }) => (
-    <div data-testid="gtm" data-gtm-id={gtmId}>GTM</div>
+    <div data-testid="gtm" data-gtm-id={gtmId}>
+      GTM
+    </div>
   ),
 }));
 
-// Mock the MotionProvider client boundary that the layout wraps the subtree
-// in. We only care that the layout actually wraps via the provider (REQ-6
-// S6.3 — LazyMotion + domAnimation lives there). Actual Framer Motion
-// runtime is covered by component-level tests.
-vi.mock("../../components/providers/MotionProvider", () => ({
-  __esModule: true,
-  default: ({ children }: { children: React.ReactNode }) => (
-    <div data-test-lazy-motion="dom">{children}</div>
-  ),
-  MotionProvider: ({ children }: { children: React.ReactNode }) => (
-    <div data-test-lazy-motion="dom">{children}</div>
-  ),
-}));
+// ===== Child component mocks =====
 
 import { getMessages, setRequestLocale } from "next-intl/server";
 import LocaleLayout from "./layout";
@@ -123,7 +117,9 @@ describe("LocaleLayout — Locale-Aware Rendering", () => {
     const provider = screen.getByTestId("intl-provider");
     expect(provider).toHaveAttribute("data-locale", "en");
 
-    const passedMessages = JSON.parse(provider.getAttribute("data-messages") || "{}");
+    const passedMessages = JSON.parse(
+      provider.getAttribute("data-messages") || "{}",
+    );
     expect(passedMessages).toEqual(mockMessages);
   });
 
@@ -196,7 +192,7 @@ describe("LocaleLayout — Locale-Aware Rendering", () => {
     }
   });
 
-  it("wraps client subtree in <LazyMotion features={domAnimation}> (REQ-6 S6.3)", async () => {
+  it("no longer wraps in MotionProvider (removed in minimalist-hero-v2 Phase 1)", async () => {
     const params = Promise.resolve({ locale: "en" });
     const Layout = await LocaleLayout({
       children: <p>Content</p>,
@@ -204,7 +200,7 @@ describe("LocaleLayout — Locale-Aware Rendering", () => {
     });
 
     const { container } = render(Layout as React.ReactElement);
-    // LazyMotion is mocked below to expose a marker we can assert against.
-    expect(container.querySelector("[data-test-lazy-motion='dom']")).not.toBeNull();
+    // MotionProvider has been deleted — no LazyMotion wrapper should exist.
+    expect(container.querySelector("[data-test-lazy-motion='dom']")).toBeNull();
   });
 });
