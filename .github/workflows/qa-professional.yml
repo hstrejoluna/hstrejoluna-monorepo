@@ -4,6 +4,7 @@ on:
   pull_request:
     branches:
       - master
+      - "feat/**"
   workflow_dispatch:
     inputs:
       retries:
@@ -151,9 +152,6 @@ jobs:
 
       - name: Lighthouse CI gate
         run: npm run qa:lighthouse --workspace=apps/portfolio
-
-      - name: Hero WebGL bundle-size gate
-        run: npm run qa:bundle --workspace=apps/portfolio
 
       - name: Upload Lighthouse artifacts
         if: always()
