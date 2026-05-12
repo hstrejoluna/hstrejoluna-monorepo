@@ -83,10 +83,10 @@ describe("HeroSection — Semantic SSR shell (REQ liquid-glass-hero)", () => {
     expect(lead.tagName).toBe("P");
   });
 
-  it("renders a primary <a> CTA pointing to #projects with aria-label", () => {
+  it("renders a primary <a> CTA pointing to #projects", () => {
     render(<HeroSection profile={null} />);
     const primaryCta = screen.getByRole("link", {
-      name: "View featured projects and case studies",
+      name: "Explore my work",
     });
     expect(primaryCta).toBeInTheDocument();
     expect(primaryCta).toHaveAttribute("href", "#projects");

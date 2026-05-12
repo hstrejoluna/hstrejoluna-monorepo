@@ -1,5 +1,4 @@
-// SkillsOverview.tsx
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { m, AnimatePresence } from "framer-motion";
 import { type Skill } from "@/types/sanity";
 import { HudChip } from "@hstrejoluna/ui";
@@ -7,10 +6,13 @@ import { HudChip } from "@hstrejoluna/ui";
 export const SkillsOverview = ({ skills }: { skills: Skill[] }) => {
   const [expandedId, setExpandedId] = useState<string | null>(null);
 
-  // Create unique categories
-  const categories = Array.from(
-    new Set(skills.map((s) => s.category).filter(Boolean)),
-  ) as string[];
+  const categories = useMemo(
+    () =>
+      Array.from(
+        new Set(skills.map((s) => s.category).filter(Boolean)),
+      ) as string[],
+    [skills],
+  );
   const [activeCategory, setActiveCategory] = useState<string>(
     categories[0] || "",
   );
@@ -58,12 +60,12 @@ export const SkillsOverview = ({ skills }: { skills: Skill[] }) => {
                 className="w-full text-left cursor-pointer p-4 md:p-6 flex items-center justify-between group hover:bg-surface_container_low transition-colors"
               >
                 <div className="flex items-center gap-4">
-                  <span className="font-mono text-primary text-xs opacity-50 group-hover:opacity-100">
+                  <span className="font-mono text-primary text-xs opacity-70 group-hover:opacity-100">
                     {`[${skill.proficiency || 0}%]`}
                   </span>
-                  <h4 className="text-base md:text-lg font-bold text-on_surface uppercase tracking-tight">
+                  <h3 className="text-base md:text-lg font-bold text-on_surface uppercase tracking-tight">
                     {skill.name}
-                  </h4>
+                  </h3>
                 </div>
 
                 <div className="hidden md:flex gap-2">
