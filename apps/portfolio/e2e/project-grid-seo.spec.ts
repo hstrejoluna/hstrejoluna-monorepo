@@ -109,7 +109,10 @@ test.describe("Project Grid — SEO & Semantic HTML", () => {
     expect(href).toContain("/projects/");
 
     await projectLink.click();
-    await page.waitForLoadState("networkidle");
+
+    // Wait for URL to reflect SPA navigation (next/link client-side routing)
+    // waitForLoadState("networkidle") is unreliable in Safari/WebKit for SPA nav
+    await page.waitForURL("**/projects/**", { timeout: 15000 });
 
     // Should be on a project page
     expect(page.url()).toContain("/projects/");
