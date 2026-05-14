@@ -62,7 +62,7 @@ The system MUST expose deterministic test commands that can be reused in local d
 
 ### Requirement: Hero Testing Extension
 
-The testing foundation SHALL include hero-specific assertions introduced by the liquid-glass redesign.
+The testing foundation SHALL include hero-specific assertions introduced by the liquid-glass redesign, aligned with the calibrated Lighthouse CI gate.
 
 #### Scenario: hero contains semantic h1 (was: NOT TESTED)
 
@@ -71,11 +71,15 @@ The testing foundation SHALL include hero-specific assertions introduced by the 
 - **Then** `screen.getByRole('heading', { level: 1 })` SHALL find exactly one element
 - **And** that element SHALL contain the canonical name + role text from `messages.hero.h1Name` + `messages.hero.h1Role`
 
-#### Scenario: Lighthouse SEO threshold raised to 95
+#### Scenario: Lighthouse SEO threshold aligned to CI gate
 
 - **Given** `qa:lighthouse` runs against the production build
 - **When** the categories are scored
-- **Then** the SEO category SHALL score ≥ 95 (previous baseline: TBD / unmeasured)
+- **Then** the SEO category SHALL score ≥ 95
+- **And** the Performance category SHALL score ≥ 0.6 (error) and ≥ 0.7 (warning)
+- **And** LCP SHALL be ≤ 4.0 s (error)
+- **And** all CI assertions SHALL reference `lighthouserc.cjs` thresholds
+(Previously: only SEO threshold at 95; no performance/LCP alignment with CI gate)
 
 #### Scenario: Playwright e2e covers reduced-motion path
 

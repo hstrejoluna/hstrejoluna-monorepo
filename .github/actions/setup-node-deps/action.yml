@@ -1,5 +1,5 @@
 name: Setup Node.js and Dependencies
-description: Checkout, Node.js setup, npm ci, and Next.js cache restore
+description: Node.js setup, npm ci, and Next.js cache restore (requires checkout first)
 
 inputs:
   node-version:
@@ -12,9 +12,6 @@ inputs:
 runs:
   using: composite
   steps:
-    - name: Checkout
-      uses: actions/checkout@v4
-
     - name: Setup Node
       uses: actions/setup-node@v4
       with:

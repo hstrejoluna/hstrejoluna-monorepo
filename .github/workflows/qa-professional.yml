@@ -64,6 +64,9 @@ jobs:
           - "WebKit + Reduced Motion"
 
     steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
       - name: Setup Node and Dependencies
         uses: ./.github/actions/setup-node-deps
 
@@ -139,6 +142,9 @@ jobs:
     timeout-minutes: 12
 
     steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
       - name: Setup Node and Dependencies
         uses: ./.github/actions/setup-node-deps
 
