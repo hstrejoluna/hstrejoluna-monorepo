@@ -3,27 +3,13 @@ import { describe, expect, it } from "vitest";
 import path from "node:path";
 
 /**
- * Strict TDD — RED → GREEN for task 5.3
- *
  * Snapshot test for lighthouserc.cjs config values.
- * Verifies thresholds match the design specification
- * (tasks.md is authoritative over specs for implementation).
  *
- * Spec: lighthouse-ci-gate / Requirement: Calibrated Thresholds
- * Design: ADR — relaxed thresholds for SSR portfolio
- * Tasks: Phase 5, task 5.1 / 5.3
+ * Thresholds are calibrated against the production portfolio's measured
+ * Lighthouse runs. See PR #90 (perf floor) and PR #92 (audit /en target).
  *
- * Thresholds per tasks.md:
- * - Perf: 0.7 warn / 0.6 error
- * - A11y: 0.9 warn / 0.8 error
- * - BestPractices: 0.9 warn / 0.8 error
- * - SEO: 0.95 warn / 0.9 error
- * - FCP: 5000ms warn (no error asserted)
- * - LCP: 4000ms error (no warn)
- * - SI: 4000ms error (no warn)
- * - TBT: 600ms warn / 1000ms error
- * - CLS: 0.1 warn / 0.25 error
- * - URL: /en (direct, no redirect)
+ * Single-tier "error" thresholds are intentional: this is a CI gate, not
+ * a tracked-warning surface. Warnings without error backing would be silent.
  */
 
 const configPath = path.resolve(__dirname, "lighthouserc.cjs");
@@ -42,16 +28,15 @@ const lhConfig = require(configPath) as {
     assert: {
       assertions: Record<
         string,
-        | Array<[string, { minScore: number }]>
+        | [string, { minScore: number }]
         | [string, { maxNumericValue: number }]
-        | Array<[string, { maxNumericValue: number }]>
       >;
     };
     upload: { target: string };
   };
 };
 
-describe("lighthouserc.cjs — calibrated thresholds (Phase 5 lighthouse-fix-all)", () => {
+describe("lighthouserc.cjs — calibrated thresholds", () => {
   it("URL targets /en directly (no redirect overhead)", () => {
     expect(lhConfig.ci.collect.url).toEqual(["http://127.0.0.1:4173/en"]);
   });
@@ -60,71 +45,50 @@ describe("lighthouserc.cjs — calibrated thresholds (Phase 5 lighthouse-fix-all
     expect(lhConfig.ci.collect.numberOfRuns).toBe(3);
   });
 
-  it("performance thresholds: 0.7 warn, 0.6 error", () => {
-    const assertions = lhConfig.ci.assert.assertions["categories:performance"];
-    expect(assertions).toEqual([
-      ["warn", { minScore: 0.7 }],
-      ["error", { minScore: 0.6 }],
+  it("performance threshold: 0.65 error", () => {
+    expect(lhConfig.ci.assert.assertions["categories:performance"]).toEqual([
+      "error",
+      { minScore: 0.65 },
     ]);
   });
 
-  it("accessibility thresholds: 0.9 warn, 0.8 error", () => {
-    const assertions =
-      lhConfig.ci.assert.assertions["categories:accessibility"];
-    expect(assertions).toEqual([
-      ["warn", { minScore: 0.9 }],
-      ["error", { minScore: 0.8 }],
+  it("accessibility threshold: 0.95 error", () => {
+    expect(lhConfig.ci.assert.assertions["categories:accessibility"]).toEqual([
+      "error",
+      { minScore: 0.95 },
     ]);
   });
 
-  it("best-practices thresholds: 0.9 warn, 0.8 error", () => {
-    const assertions =
-      lhConfig.ci.assert.assertions["categories:best-practices"];
-    expect(assertions).toEqual([
-      ["warn", { minScore: 0.9 }],
-      ["error", { minScore: 0.8 }],
+  it("best-practices threshold: 0.9 warn", () => {
+    expect(lhConfig.ci.assert.assertions["categories:best-practices"]).toEqual([
+      "warn",
+      { minScore: 0.9 },
     ]);
   });
 
-  it("SEO thresholds: 0.95 warn, 0.9 error", () => {
-    const assertions = lhConfig.ci.assert.assertions["categories:seo"];
-    expect(assertions).toEqual([
-      ["warn", { minScore: 0.95 }],
-      ["error", { minScore: 0.9 }],
+  it("SEO threshold: 0.95 error", () => {
+    expect(lhConfig.ci.assert.assertions["categories:seo"]).toEqual([
+      "error",
+      { minScore: 0.95 },
     ]);
   });
 
-  it("FCP: 5000ms warn threshold", () => {
-    const assertions =
-      lhConfig.ci.assert.assertions["first-contentful-paint"];
-    expect(assertions).toEqual(["warn", { maxNumericValue: 5000 }]);
+  it("FCP: 3000ms error threshold", () => {
+    expect(
+      lhConfig.ci.assert.assertions["first-contentful-paint"],
+    ).toEqual(["error", { maxNumericValue: 3000 }]);
   });
 
-  it("LCP: 4000ms error threshold (matches design budget ≤4.0s)", () => {
-    const assertions =
-      lhConfig.ci.assert.assertions["largest-contentful-paint"];
-    expect(assertions).toEqual(["error", { maxNumericValue: 4000 }]);
+  it("LCP: 2500ms error threshold", () => {
+    expect(
+      lhConfig.ci.assert.assertions["largest-contentful-paint"],
+    ).toEqual(["error", { maxNumericValue: 2500 }]);
   });
 
   it("Speed Index: 4000ms error threshold", () => {
-    const assertions = lhConfig.ci.assert.assertions["speed-index"];
-    expect(assertions).toEqual(["error", { maxNumericValue: 4000 }]);
-  });
-
-  it("TBT: 600ms warn, 1000ms error", () => {
-    const assertions = lhConfig.ci.assert.assertions["total-blocking-time"];
-    expect(assertions).toEqual([
-      ["warn", { maxNumericValue: 600 }],
-      ["error", { maxNumericValue: 1000 }],
-    ]);
-  });
-
-  it("CLS: 0.1 warn, 0.25 error", () => {
-    const assertions =
-      lhConfig.ci.assert.assertions["cumulative-layout-shift"];
-    expect(assertions).toEqual([
-      ["warn", { maxNumericValue: 0.1 }],
-      ["error", { maxNumericValue: 0.25 }],
+    expect(lhConfig.ci.assert.assertions["speed-index"]).toEqual([
+      "error",
+      { maxNumericValue: 4000 },
     ]);
   });
 

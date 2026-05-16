@@ -15,7 +15,6 @@ import { HeroSection } from "./fragments/HeroSection";
 import { ExperienceOverview } from "./fragments/ExperienceOverview";
 import { SkillsOverview } from "./fragments/SkillsOverview";
 import { CertificatesOverview } from "./fragments/CertificatesOverview";
-import { BootSequence } from "@hstrejoluna/ui";
 
 const CommandNav = dynamic(
   () => import("./ui/CommandNav").then((mod) => mod.CommandNav),
@@ -41,6 +40,7 @@ interface ObsidianStreamProps {
   experiences: Experience[];
   certificates: Certificate[];
   projectsContent?: React.ReactNode;
+  skipHero?: boolean;
 }
 
 interface StreamSectionProps {
@@ -129,20 +129,19 @@ export const ObsidianStream = ({
   experiences,
   certificates,
   projectsContent,
+  skipHero = false,
 }: ObsidianStreamProps) => {
   const tCommon = useTranslations("common");
   const tBrand = useTranslations("brand");
   const tNav = useTranslations("nav");
   const tPortfolioGrid = useTranslations("fragments.portfolioGrid");
-  const skipBootSequence = process.env.NEXT_PUBLIC_SKIP_BOOT_SEQUENCE === "1";
-  const [isBooted, setIsBooted] = useState(skipBootSequence);
   const isReducedMotion = useReducedMotion();
   const isNavigationHidden = false;
 
   const activeId = useActiveSection<StreamSectionId>(
     streamSectionIds,
     0.4,
-    isBooted,
+    true,
   );
 
   const sectionBaseWrapperClass =
@@ -150,31 +149,9 @@ export const ObsidianStream = ({
   const compactSectionWrapperClass = `${sectionBaseWrapperClass} pb-12`;
   const fullSectionWrapperClass = `${sectionBaseWrapperClass} pb-32`;
 
-  useEffect(() => {
-    if (!isBooted) {
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "";
-    }
-    return () => {
-      document.body.style.overflow = "";
-    };
-  }, [isBooted]);
-
   return (
     <div className="relative bg-background w-full min-h-screen font-sans overflow-x-hidden">
-      {/* Boot sequence — CSS transition exit replaces AnimatePresence */}
-      <div
-        className={`transition-opacity duration-500 ${
-          isBooted ? "opacity-0 pointer-events-none" : "opacity-100"
-        }`}
-        aria-hidden={isBooted}
-      >
-        {!isBooted && <BootSequence onComplete={() => setIsBooted(true)} />}
-      </div>
-
-      {isBooted && (
-        <div className="animate-hero-fade-in">
+      <div className="animate-hero-fade-in">
           {/* Background name watermark — pure CSS fixed parallax.
               Replaces framer-motion useScroll+useTransform.
               Respects prefers-reduced-motion via no animation. */}
@@ -201,7 +178,7 @@ export const ObsidianStream = ({
           />
 
           <div className="relative z-10 flex flex-col w-full">
-            <HeroSection profile={profile} />
+            {!skipHero && <HeroSection profile={profile} />}
             <StreamSection
               id="projects"
               sectionClassName="stream-section bg-surface_container_lowest"
@@ -241,8 +218,7 @@ export const ObsidianStream = ({
           </div>
 
           <ScrollProgressBar isReducedMotion={isReducedMotion} />
-        </div>
-      )}
+      </div>
     </div>
   );
 };
