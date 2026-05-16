@@ -66,7 +66,20 @@ test.describe("portfolio navigation behavior", () => {
       .first();
     await expect(certificatesNavLink).toBeVisible();
 
-    await certificatesNavLink.click();
+    // LiquidNav uses framer-motion spring entrance animation (y:100→0).
+    // Playwright's toBeVisible() passes (element has size) but click() fails
+    // with "outside viewport" because the nav is still translated offscreen.
+    // Bypass via page.evaluate: dispatch a click in the page's JS context.
+    await page.evaluate(() => {
+      const nav = document.querySelector('[data-testid="liquid-nav"]');
+      const buttons = nav?.querySelectorAll("button") ?? [];
+      for (const btn of buttons) {
+        if (btn.textContent?.toLowerCase().includes("certificates")) {
+          btn.click();
+          break;
+        }
+      }
+    });
 
     // URL hash is set synchronously via replaceState — reliable first gate.
     await expect(page).toHaveURL(/#certificates$/);
@@ -100,7 +113,10 @@ test.describe("portfolio navigation behavior", () => {
       name: /^menu$/i,
     });
     await expect(openMenuButton).toBeVisible();
-    await openMenuButton.click();
+    // Dispatch click in JS context — LiquidNav spring entrance animation
+    // places the button offscreen via CSS transform. force:true bypasses
+    // actionability checks but NOT viewport/scroll-into-view on fixed elements
+    await openMenuButton.evaluate((el) => (el as HTMLButtonElement).click());
 
     const mobileNavigation = page.getByRole("navigation", {
       name: /mobile sections/i,

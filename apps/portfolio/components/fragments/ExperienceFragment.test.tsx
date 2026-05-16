@@ -24,24 +24,6 @@ vi.mock("@hstrejoluna/ui", async (importOriginal) => {
   };
 });
 
-vi.mock("framer-motion", async (importOriginal) => {
-  const actual = await importOriginal<typeof import("framer-motion")>();
-  return {
-    ...actual,
-    motion: {
-      ...actual.motion,
-      div: ({
-        children,
-        ...props
-      }: React.PropsWithChildren<Record<string, unknown>>) => (
-        <div {...(props as React.HTMLAttributes<HTMLDivElement>)}>
-          {children}
-        </div>
-      ),
-    },
-  };
-});
-
 const mockExperience = {
   _id: "exp-1",
   _type: "experience" as const,

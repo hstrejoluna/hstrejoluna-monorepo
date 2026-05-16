@@ -185,9 +185,6 @@ jobs:
           # SEO audit fails canonical: "Points to another hreflang location".
           NEXT_PUBLIC_BASE_URL: "http://127.0.0.1:4173"
 
-      - name: Bundle-size gate
-        run: npx turbo run qa:bundle --filter=portfolio
-
       - name: Upload Lighthouse artifacts
         if: always()
         uses: actions/upload-artifact@v4

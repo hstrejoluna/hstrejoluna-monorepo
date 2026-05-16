@@ -2,34 +2,47 @@ import AxeBuilder from "@axe-core/playwright";
 import { expect, test } from "@playwright/test";
 
 test.describe("portfolio accessibility", () => {
-  test("home page has no critical accessibility violations", async ({ page }) => {
+  test("home page has no critical accessibility violations", async ({
+    page,
+  }) => {
     await page.goto("/");
 
     const analysis = await new AxeBuilder({ page }).analyze();
     const criticalViolations = analysis.violations.filter(
-      (violation) => violation.impact === "critical"
+      (violation) => violation.impact === "critical",
     );
 
     expect(
       criticalViolations,
       `Critical violations found: ${criticalViolations
         .map((violation) => `${violation.id}: ${violation.help}`)
-        .join(", ")}`
+        .join(", ")}`,
     ).toEqual([]);
   });
 
   test("desktop keyboard navigation keeps logical tab order with visible focus", async ({
     page,
   }, testInfo) => {
-    test.skip(testInfo.project.name.includes("Mobile"), "Desktop-only keyboard flow");
+    test.skip(
+      testInfo.project.name.includes("Mobile"),
+      "Desktop-only keyboard flow",
+    );
 
     await page.goto("/");
 
     // LiquidNav buttons should be present.
-    await expect(page.getByRole("button", { name: /^projects$/i }).first()).toBeVisible();
-    await expect(page.getByRole("button", { name: /^experience$/i }).first()).toBeVisible();
-    await expect(page.getByRole("button", { name: /^skills$/i }).first()).toBeVisible();
-    await expect(page.getByRole("button", { name: /^certificates$/i }).first()).toBeVisible();
+    await expect(
+      page.getByRole("button", { name: /^projects$/i }).first(),
+    ).toBeVisible();
+    await expect(
+      page.getByRole("button", { name: /^experience$/i }).first(),
+    ).toBeVisible();
+    await expect(
+      page.getByRole("button", { name: /^skills$/i }).first(),
+    ).toBeVisible();
+    await expect(
+      page.getByRole("button", { name: /^certificates$/i }).first(),
+    ).toBeVisible();
 
     const focusedNavLabels: string[] = [];
     const focusedOutlineWidths: number[] = [];
@@ -73,8 +86,8 @@ test.describe("portfolio accessibility", () => {
     }
 
     expect(focusedNavLabels.slice(0, 6)).toEqual([
-      "Switch to English",
-      "Switch to Spanish",
+      "EN — Switch to English",
+      "ES — Switch to Spanish",
       "Projects",
       "Experience",
       "Skills",

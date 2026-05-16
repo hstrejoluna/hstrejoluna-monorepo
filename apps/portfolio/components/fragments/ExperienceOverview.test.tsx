@@ -10,33 +10,6 @@ vi.mock("@portabletext/react", () => ({
   ),
 }));
 
-vi.mock("framer-motion", async (importOriginal) => {
-  const actual = await importOriginal<typeof import("framer-motion")>();
-  return {
-    ...actual,
-    AnimatePresence: ({ children }: React.PropsWithChildren) => <>{children}</>,
-    motion: {
-      ...actual.motion,
-      div: ({
-        children,
-        ...props
-      }: React.PropsWithChildren<Record<string, unknown>>) => (
-        <div {...(props as React.HTMLAttributes<HTMLDivElement>)}>
-          {children}
-        </div>
-      ),
-      button: ({
-        children,
-        ...props
-      }: React.PropsWithChildren<Record<string, unknown>>) => (
-        <button {...(props as React.ButtonHTMLAttributes<HTMLButtonElement>)}>
-          {children}
-        </button>
-      ),
-    },
-  };
-});
-
 vi.mock("lucide-react", () => ({
   Calendar: () => <span data-testid="icon-calendar" />,
   Building: () => <span data-testid="icon-building" />,

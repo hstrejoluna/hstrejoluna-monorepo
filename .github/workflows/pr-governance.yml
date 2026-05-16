@@ -4,6 +4,7 @@ on:
   pull_request:
     branches:
       - master
+      - 'feat/**'
     types:
       - opened
       - edited
@@ -57,6 +58,12 @@ jobs:
       - name: Validate Gitflow base branch mapping
         run: |
           set -euo pipefail
+
+          # Feature-branch-chain: feat/* PRs can target other feat/* branches
+          if [[ "${HEAD_BRANCH}" =~ ^feat/ ]] && [[ "${BASE_BRANCH}" =~ ^feat/ ]]; then
+            echo "Feature-branch-chain detected: ${HEAD_BRANCH} → ${BASE_BRANCH}"
+            exit 0
+          fi
 
           if [[ "${HEAD_BRANCH}" =~ ^(release|hotfix)/ ]]; then
             if [ "${BASE_BRANCH}" != "master" ]; then
@@ -163,3 +170,19 @@ PY
             echo "One or more commits do not follow Conventional Commits."
             exit 1
           fi
+
+      - name: Gentleman Guardian Angel — AI Code Review
+        id: gga
+        run: |
+          set -euo pipefail
+          # Install GGA for CI if not present (one-time setup per runner)
+          if ! command -v gga &>/dev/null; then
+            echo "Installing GGA..."
+            curl -fsSL https://raw.githubusercontent.com/Gentleman-Programming/gentleman-guardian-angel/main/install.sh | bash
+            export PATH="${HOME}/.local/bin:${PATH}"
+          fi
+          echo "Running GGA PR review..."
+          gga run --pr-mode --diff-only || {
+            echo "::warning::GGA review found issues — see log above"
+            # Non-blocking for now; change to 'exit 1' to enforce
+          }
