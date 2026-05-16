@@ -21,7 +21,7 @@ export const HeroText = async ({ profile, locale }: HeroTextProps) => {
   return (
     <section id="hero" aria-labelledby="hero-title" className="relative z-[1]">
       {/* Text content — zero JS shipped */}
-      <div className="z-10 relative flex flex-col items-start w-full max-w-7xl mx-auto px-4 sm:px-6 md:px-24 pt-24 md:pt-32 pb-16 md:pb-24">
+      <div className="relative z-[2] flex flex-col items-start w-full max-w-7xl mx-auto px-4 sm:px-6 md:px-24 pt-24 md:pt-32 pb-16 md:pb-24">
         {/* Eyebrow */}
         <p className="font-mono text-[10px] md:text-xs tracking-[0.5em] text-ember mb-6 uppercase">
           {t("eyebrow")}

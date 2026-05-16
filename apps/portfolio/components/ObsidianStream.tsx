@@ -177,7 +177,7 @@ export const ObsidianStream = ({
             hideOnScroll={isNavigationHidden}
           />
 
-          <div className="relative z-10 flex flex-col w-full">
+          <div className="relative z-[2] flex flex-col w-full">
             {!skipHero && <HeroSection profile={profile} />}
             <StreamSection
               id="projects"
