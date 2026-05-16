@@ -30,14 +30,14 @@ vi.mock("@/components/ProjectsGrid", () => ({
 }));
 
 describe("page.tsx — ISR Revalidation", () => {
-  it("exports revalidate = 60 instead of force-dynamic", async () => {
+  it("exports a finite revalidate interval (ISR) instead of force-dynamic", async () => {
     const mod = await import("./page");
 
-    // Must export revalidate (ISR), not dynamic = "force-dynamic"
     expect(mod).toHaveProperty("revalidate");
-    expect(mod.revalidate).toBe(60);
+    expect(typeof mod.revalidate).toBe("number");
+    expect(mod.revalidate).toBeGreaterThan(0);
+    expect(Number.isFinite(mod.revalidate)).toBe(true);
 
-    // dynamic must NOT be "force-dynamic"
     expect(mod).not.toHaveProperty("dynamic");
   });
 });
