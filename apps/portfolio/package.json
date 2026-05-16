@@ -17,24 +17,19 @@
     "qa:e2e": "playwright test",
     "qa:e2e:headed": "playwright test --headed",
     "qa:lighthouse": "lhci autorun --config=./lighthouserc.cjs",
-    "qa:bundle": "node ./scripts/check-hero-webgl-bundle.mjs",
-    "qa:gate": "npm run lint && npm run test && npm run qa:e2e && npm run qa:lighthouse && npm run qa:bundle"
+    "qa:gate": "npm run lint && npm run test && npm run qa:e2e && npm run qa:lighthouse"
   },
   "dependencies": {
     "@hstrejoluna/compliance": "*",
     "@hstrejoluna/ui": "*",
     "@portabletext/react": "^6.0.3",
-    "@react-three/drei": "^10.7.7",
-    "@react-three/fiber": "^9.6.1",
     "@sanity/image-url": "^1.1.0",
     "apify-client": "^2.22.3",
-    "framer-motion": "^12.38.0",
     "next": "latest",
     "next-intl": "^4.9.1",
     "next-sanity": "^12.2.1",
     "react": "latest",
-    "react-dom": "latest",
-    "three": "^0.184.0"
+    "react-dom": "latest"
   },
   "devDependencies": {
     "@axe-core/playwright": "^4.11.1",

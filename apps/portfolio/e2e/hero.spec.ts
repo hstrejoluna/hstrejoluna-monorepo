@@ -3,47 +3,55 @@ import { expect, test } from "@playwright/test";
 
 test.describe("Hero — Liquid Glass (e2e)", () => {
   // ═══════════════════════════════════════════════════════════════════
-  // 7.1 RED → 7.2 GREEN: Desktop — Canvas mounts
+  // Desktop — CSS blob hero renders (no canvas)
   // ═══════════════════════════════════════════════════════════════════
-  test("desktop 1440x900: canvas mounts when capability gate allows WebGL", async ({
+  test("desktop 1440x900: hero renders with CSS blobs, no canvas", async ({
     page,
-    browserName,
-  }, testInfo) => {
-    test.skip(
-      browserName === "firefox" ||
-        (browserName === "webkit" && testInfo.project.name === "Mobile Safari"),
-      "WebGL2 not available in headless Firefox or headless mobile WebKit",
-    );
-
+  }) => {
     await page.setViewportSize({ width: 1440, height: 900 });
     await page.goto("/");
 
     const heroSection = page.locator('section[aria-labelledby="hero-title"]');
     await expect(heroSection).toBeVisible();
 
-    // Wait for dynamic(r3f) canvas to attach to DOM before asserting visibility.
-    await page.waitForSelector("canvas", { state: "attached" });
+    // Verify zero canvas — the hero is pure CSS (no WebGL layer)
+    await expect(heroSection.locator("canvas")).toHaveCount(0);
 
-    // The r3f Canvas renders a <canvas> element in the DOM.
-    // Wait for dynamic(r3f) chunk to load — give up to 5s.
-    await expect(heroSection.locator("canvas")).toBeVisible({ timeout: 5000 });
+    // CSS blobs are rendered as div.hero-blob (aria-hidden, visual only)
+    const blobs = heroSection.locator('[class*="hero-blob"]');
+    await expect(blobs).toHaveCount(3);
+
+    // h1 is visible as the LCP candidate
+    await expect(page.locator("#hero-title")).toBeVisible();
+
+    // Primary CTA is visible
+    await expect(page.getByRole("link", { name: /projects/i })).toBeVisible();
   });
 
   // ═══════════════════════════════════════════════════════════════════
-  // 7.3 RED → 7.4 GREEN: Mobile — No canvas
+  // Mobile — CSS blob hero renders (no canvas)
   // ═══════════════════════════════════════════════════════════════════
-  test("mobile 375x812: no canvas in hero section", async ({ page }) => {
+  test("mobile 375x812: hero renders with CSS blobs, no canvas", async ({
+    page,
+  }) => {
     await page.setViewportSize({ width: 375, height: 812 });
     await page.goto("/");
 
     const heroSection = page.locator('section[aria-labelledby="hero-title"]');
     await expect(heroSection).toBeVisible();
 
-    // Give ObsidianStream + dynamic() time to resolve (capability gate should reject mobile)
-    await page.waitForTimeout(5000);
-
-    // No canvas should appear — capability gate excludes < 1024px
+    // Zero canvas — pure CSS hero works on all viewport sizes
     await expect(heroSection.locator("canvas")).toHaveCount(0);
+
+    // CSS blobs are present and visible
+    const blobs = heroSection.locator('[class*="hero-blob"]');
+    await expect(blobs).toHaveCount(3);
+
+    // h1 is visible
+    await expect(page.locator("#hero-title")).toBeVisible();
+
+    // Primary CTA is visible
+    await expect(page.getByRole("link", { name: /projects/i })).toBeVisible();
   });
 
   // ═══════════════════════════════════════════════════════════════════
@@ -62,12 +70,6 @@ test.describe("Hero — Liquid Glass (e2e)", () => {
 
     const heroSection = page.locator('section[aria-labelledby="hero-title"]');
     await expect(heroSection).toBeVisible();
-
-    // Wait for dynamic(r3f) canvas to attach before scanning.
-    // Firefox headless may never render WebGL — catch and proceed gracefully.
-    await page
-      .waitForSelector("canvas", { state: "attached", timeout: 8000 })
-      .catch(() => {});
 
     const analysis = await new AxeBuilder({ page })
       .include('section[aria-labelledby="hero-title"]')

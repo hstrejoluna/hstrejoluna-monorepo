@@ -26,9 +26,9 @@ export function LocaleSwitcher() {
           className={`px-2 py-0.5 text-[10px] font-mono transition-all duration-300 uppercase ${
             locale === cur
               ? "bg-ember text-void font-bold"
-              : "text-gray-300 hover:text-gray-200 hover:bg-white/5"
+              : "text-gray-400 hover:text-gray-200 hover:bg-white/5"
           }`}
-          aria-label={`Switch to ${cur === "en" ? "English" : "Spanish"}`}
+          aria-label={`${cur.toUpperCase()} — Switch to ${cur === "en" ? "English" : "Spanish"}`}
           aria-pressed={locale === cur}
         >
           {cur}

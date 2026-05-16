@@ -165,6 +165,41 @@ describe("globals.css — .hero-card-tint detail verification (triangulation)", 
   });
 });
 
+describe("globals.css — .animate-hero-fade-in LCP animation (Phase 4 lighthouse-fix-all)", () => {
+  it("hero-fade-in animation duration is 0.15s (below Lighthouse 333ms frame budget)", () => {
+    const content = loadCss();
+    // The main .animate-hero-fade-in rule (outside @media) uses 0.15s
+    // Match the rule that contains the animation shorthand with the duration
+    const match = content.match(
+      /\.animate-hero-fade-in\s*\{[^}]*animation\s*:\s*hero-fade-in\s+0\.15s[^}]*\}/,
+    );
+    expect(match).not.toBeNull();
+  });
+
+  it("hero-fade-in keyframe to-block ends with opacity: 1 for LCP visibility", () => {
+    const content = loadCss();
+    // The hero-fade-in keyframe has nested blocks. Check the full CSS
+    // contains a `to` block with opacity: 1 inside the keyframe.
+    const match = content.match(
+      /@keyframes\s+hero-fade-in\s*\{[\s\S]*?to\s*\{[^}]*opacity\s*:\s*1\s*[^}]*\}/,
+    );
+    expect(match).not.toBeNull();
+  });
+
+  it("reduced-motion override sets animate-hero-fade-in to instant opacity: 1", () => {
+    const content = loadCss();
+    // The prefers-reduced-motion media query must set .animate-hero-fade-in
+    // to animation: none and opacity: 1
+    const reducedMotionMatch = content.match(
+      /@media\s+\(prefers-reduced-motion:\s*reduce\)[\s\S]*?\.animate-hero-fade-in\s*\{([^}]+)\}/,
+    );
+    expect(reducedMotionMatch).not.toBeNull();
+    const body = reducedMotionMatch![1];
+    expect(body).toContain("animation: none");
+    expect(body).toContain("opacity: 1");
+  });
+});
+
 describe("globals.css — .hero-blob detail verification (triangulation)", () => {
   it(".hero-blob sets pointer-events: none to prevent interaction blocking", () => {
     const content = loadCss();

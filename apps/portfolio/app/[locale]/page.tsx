@@ -15,7 +15,7 @@ import { HeroText } from "@/components/HeroText";
 import { ObsidianStreamLoader } from "@/components/ObsidianStreamLoader";
 import { ProjectsGrid } from "@/components/ProjectsGrid";
 
-export const revalidate = 60;
+export const revalidate = 3600;
 
 const profileQuery = '*[_type == "profile"][0]';
 const projectsQuery =

@@ -116,15 +116,50 @@ body::before {
   }
 }
 
+/* Blob-specific drift animations — only active when user has NO reduced-motion
+   preference.  Using (prefers-reduced-motion: no-preference) avoids cascade/
+   specificity fights with the @media (prefers-reduced-motion: reduce) block. */
+@media (prefers-reduced-motion: no-preference) {
+  .hero-blob.hero-blob-drift-1 {
+    animation: hero-blob-drift-1 8s ease-in-out infinite alternate;
+  }
+  .hero-blob.hero-blob-drift-2 {
+    animation: hero-blob-drift-2 10s ease-in-out infinite alternate;
+  }
+  .hero-blob.hero-blob-drift-3 {
+    animation: hero-blob-drift-3 12s ease-in-out infinite alternate;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
   }
 
   /* Freeze hero blob animations — spec § "reduced-motion freezes the CSS layer" */
-  .hero-blob {
+  .hero-blob,
+  .hero-blob.hero-blob-drift-1,
+  .hero-blob.hero-blob-drift-2,
+  .hero-blob.hero-blob-drift-3 {
     animation: none !important;
     animation-play-state: paused !important;
+  }
+
+  /* Skip hero entrance fade — instant visible, no motion */
+  .animate-hero-fade-in {
+    animation: none;
+    opacity: 1;
+  }
+
+  /* Disable parallax effect */
+  .bg-fixed-parallax {
+    background-attachment: scroll;
+  }
+
+  /* Progress bar always full width */
+  .scroll-progress-fill {
+    --scroll-progress: 1;
+    animation: none;
   }
 }
 
@@ -218,6 +253,47 @@ body::before {
   100% {
     transform: translate(0, 0) rotate(0deg) scale(1);
   }
+}
+
+/* ── Hero entrance — CSS-only fade-in replacing framer-motion m.div ── */
+@keyframes hero-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.animate-hero-fade-in {
+  animation: hero-fade-in 0.15s ease-out forwards;
+}
+
+/* ── Scroll progress bar — CSS custom property driven ──────────── */
+.scroll-progress-fill {
+  transform: scaleX(var(--scroll-progress, 0));
+}
+
+/* ── Progressive enhancement: animation-timeline for zero-JS scroll bar ── */
+@supports (animation-timeline: scroll()) {
+  .scroll-progress-fill {
+    animation: scroll-progress-keyframes linear;
+    animation-timeline: scroll();
+  }
+
+  @keyframes scroll-progress-keyframes {
+    from {
+      transform: scaleX(0);
+    }
+    to {
+      transform: scaleX(1);
+    }
+  }
+}
+
+/* ── Background parallax via background-attachment ─────────────── */
+.bg-fixed-parallax {
+  background-attachment: fixed;
 }
 
 /* ── High Contrast Mode — WCAG 2.2 AA ───────────────────────── */
