@@ -19,7 +19,7 @@ export const HeroText = async ({ profile, locale }: HeroTextProps) => {
   const lead = profile?.headline ?? t("lead");
 
   return (
-    <section id="hero" aria-labelledby="hero-title" className="relative">
+    <section id="hero" aria-labelledby="hero-title" className="relative z-[1]">
       {/* Text content — zero JS shipped */}
       <div className="z-10 relative flex flex-col items-start w-full max-w-7xl mx-auto px-4 sm:px-6 md:px-24 pt-24 md:pt-32 pb-16 md:pb-24">
         {/* Eyebrow */}
