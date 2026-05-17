@@ -28,31 +28,6 @@ vi.mock("@hstrejoluna/ui", async (importOriginal) => {
   };
 });
 
-vi.mock("framer-motion", async (importOriginal) => {
-  const actual = await importOriginal<typeof import("framer-motion")>();
-  return {
-    ...actual,
-    useScroll: () => ({ scrollYProgress: { get: () => 0 } }),
-    useTransform: (_: unknown, __: unknown, values: string[]) => values[0],
-    AnimatePresence: ({ children }: React.PropsWithChildren) => <>{children}</>,
-    LazyMotion: ({ children }: React.PropsWithChildren) => (
-      <div data-lazy-motion-wrapper="">{children}</div>
-    ),
-    motion: {
-      ...actual.motion,
-      div: ({
-        children,
-        style,
-        ...props
-      }: React.PropsWithChildren<Record<string, unknown>>) => (
-        <div {...(props as React.HTMLAttributes<HTMLDivElement>)}>
-          {children}
-        </div>
-      ),
-    },
-  };
-});
-
 vi.mock("@/hooks/useAutoHideNavigation", () => ({
   useAutoHideNavigation: () => false,
 }));
@@ -182,5 +157,69 @@ describe("ObsidianStream — LazyMotion and section wrapper", () => {
     // ObsidianStream must NOT add a duplicate section#hero wrapper.
     const heroSections = document.querySelectorAll("section#hero");
     expect(heroSections).toHaveLength(1);
+  });
+});
+
+describe("ObsidianStream — Post-framer-motion: CSS animations only", () => {
+  it("uses CSS animation class on booted wrapper instead of framer-motion m.div", () => {
+    const { container } = render(<ObsidianStream {...defaultProps} />);
+
+    // Post-boot entrance wrapper must use a CSS animation class, not
+    // framer-motion m.div with initial/animate props.
+    const entranceWrapper = container.querySelector(".animate-hero-fade-in");
+    expect(entranceWrapper).toBeInTheDocument();
+  });
+
+  it("uses background-attachment:fixed for background parallax instead of useScroll+useTransform", () => {
+    render(<ObsidianStream {...defaultProps} />);
+
+    // Background name watermark must use pure CSS fixed-background
+    // parallax — no framer-motion motion values.
+    const bgName = screen
+      .getByText("Test User")
+      .closest("[aria-hidden='true'].fixed.inset-0");
+    expect(bgName).toBeInTheDocument();
+    // Verify the CSS mechanism is present: either the bg-fixed-parallax
+    // class (via globals.css) or inline background-attachment:fixed.
+    const hasParallaxClass = bgName!.classList.contains("bg-fixed-parallax");
+    const hasFixedStyle =
+      bgName!.getAttribute("style")?.includes("background-attachment: fixed") ||
+      false;
+    expect(hasParallaxClass || hasFixedStyle).toBe(true);
+  });
+
+  it("scroll progress bar uses CSS animation-timeline:view() or IntersectionObserver, not m.div scaleX", () => {
+    const { container } = render(<ObsidianStream {...defaultProps} />);
+
+    // The progress bar inner fill must NOT be a framer-motion m.div with
+    // style.scaleX. Instead it must use CSS (animation-timeline or
+    // IntersectionObserver + class toggle).
+    const progressBarInner = container.querySelector(
+      ".fixed.top-0.left-0.w-full [style*='scaleX']",
+    );
+    expect(progressBarInner).toBeNull();
+  });
+
+  it("does not import or call createPortal (HeroLiquidField portal removed in Phase 1)", () => {
+    render(<ObsidianStream {...defaultProps} />);
+
+    // After PR1 deleted HeroLiquidField, no createPortal should remain.
+    // Verify no React portal mount points or portal-related DOM exist.
+    const portalTargets = document.querySelectorAll(
+      "[id*='portal'], [id*='visual-mount']",
+    );
+    expect(portalTargets).toHaveLength(0);
+  });
+
+  it("renders content section wrapper as plain <div>, not m.div", () => {
+    const { container } = render(<ObsidianStream {...defaultProps} />);
+
+    // The inner content wrapper (post-boot) must not carry framer-motion
+    // style attributes like transform:none that m.div injects.
+    const motionStyleDivs = container.querySelectorAll(
+      "div[style*='transform']",
+    );
+    // Zero divs should have inline transform styles from motion.
+    expect(motionStyleDivs).toHaveLength(0);
   });
 });

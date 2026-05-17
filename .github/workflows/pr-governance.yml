@@ -4,6 +4,7 @@ on:
   pull_request:
     branches:
       - master
+      - 'feat/**'
     types:
       - opened
       - edited
@@ -57,6 +58,12 @@ jobs:
       - name: Validate Gitflow base branch mapping
         run: |
           set -euo pipefail
+
+          # Feature-branch-chain: feat/* PRs can target other feat/* branches
+          if [[ "${HEAD_BRANCH}" =~ ^feat/ ]] && [[ "${BASE_BRANCH}" =~ ^feat/ ]]; then
+            echo "Feature-branch-chain detected: ${HEAD_BRANCH} → ${BASE_BRANCH}"
+            exit 0
+          fi
 
           if [[ "${HEAD_BRANCH}" =~ ^(release|hotfix)/ ]]; then
             if [ "${BASE_BRANCH}" != "master" ]; then

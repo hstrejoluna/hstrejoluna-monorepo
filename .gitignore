@@ -48,5 +48,15 @@ apps/studio/node_modules
 # Antigravity (Skill Registry)
 .atl/
 
+# AI agent skills (local only, managed by gentle-ai)
+.agents/
+.claude/
+
+# Spec-driven development artifacts (optional: remove to track)
+openspec/
+
+# Skills lock file (auto-generated)
+skills-lock.json
+
 # Local act configuration
 .github/act/*.local

@@ -19,9 +19,9 @@ export const HeroText = async ({ profile, locale }: HeroTextProps) => {
   const lead = profile?.headline ?? t("lead");
 
   return (
-    <section id="hero" aria-labelledby="hero-title" className="relative">
+    <section id="hero" aria-labelledby="hero-title" className="relative z-[1] pointer-events-none">
       {/* Text content — zero JS shipped */}
-      <div className="z-10 relative flex flex-col items-start w-full max-w-7xl mx-auto px-4 sm:px-6 md:px-24 pt-24 md:pt-32 pb-16 md:pb-24">
+      <div className="relative z-[2] pointer-events-none flex flex-col items-start w-full max-w-7xl mx-auto px-4 sm:px-6 md:px-24 pt-24 md:pt-32 pb-16 md:pb-24">
         {/* Eyebrow */}
         <p className="font-mono text-[10px] md:text-xs tracking-[0.5em] text-ember mb-6 uppercase">
           {t("eyebrow")}
@@ -43,7 +43,7 @@ export const HeroText = async ({ profile, locale }: HeroTextProps) => {
         </p>
 
         {/* CTAs */}
-        <div className="flex flex-col sm:flex-row gap-4">
+        <div className="flex flex-col sm:flex-row gap-4 pointer-events-auto">
           <Link
             href="#projects"
             aria-label={`${t("ctaAriaLabel")} — ${t("cta")}`}
@@ -77,7 +77,7 @@ export const HeroText = async ({ profile, locale }: HeroTextProps) => {
       >
         {/* Blob 1 — primary */}
         <div
-          className="absolute w-[60vw] h-[60vw] max-w-[800px] max-h-[800px] rounded-full opacity-60"
+          className="hero-blob hero-blob--primary absolute w-[60vw] h-[60vw] max-w-[800px] max-h-[800px] rounded-full opacity-60"
           style={{
             background:
               "radial-gradient(circle, rgba(255,86,55,0.3) 0%, rgba(255,86,55,0.05) 50%, transparent 70%)",
@@ -89,7 +89,7 @@ export const HeroText = async ({ profile, locale }: HeroTextProps) => {
 
         {/* Blob 2 — secondary */}
         <div
-          className="absolute w-[40vw] h-[40vw] max-w-[500px] max-h-[500px] rounded-full opacity-40"
+          className="hero-blob hero-blob--secondary absolute w-[40vw] h-[40vw] max-w-[500px] max-h-[500px] rounded-full opacity-40"
           style={{
             background:
               "radial-gradient(circle, rgba(209,77,255,0.2) 0%, rgba(209,77,255,0.03) 60%, transparent 80%)",
@@ -101,7 +101,7 @@ export const HeroText = async ({ profile, locale }: HeroTextProps) => {
 
         {/* Blob 3 — accent */}
         <div
-          className="absolute w-[30vw] h-[30vw] max-w-[350px] max-h-[350px] rounded-full opacity-30"
+          className="hero-blob hero-blob--accent absolute w-[30vw] h-[30vw] max-w-[350px] max-h-[350px] rounded-full opacity-30"
           style={{
             background:
               "radial-gradient(circle, rgba(34,197,94,0.15) 0%, rgba(34,197,94,0.02) 60%, transparent 80%)",

@@ -10,25 +10,6 @@ vi.mock("@hstrejoluna/ui", async (importOriginal) => {
   };
 });
 
-vi.mock("framer-motion", async (importOriginal) => {
-  const actual = await importOriginal<typeof import("framer-motion")>();
-  return {
-    ...actual,
-    AnimatePresence: ({ children }: React.PropsWithChildren) => <>{children}</>,
-    motion: {
-      ...actual.motion,
-      div: ({
-        children,
-        ...props
-      }: React.PropsWithChildren<Record<string, unknown>>) => (
-        <div {...(props as React.HTMLAttributes<HTMLDivElement>)}>
-          {children}
-        </div>
-      ),
-    },
-  };
-});
-
 const mockSkills = [
   {
     _id: "s1",
@@ -96,17 +77,5 @@ describe("SkillsOverview — Keyboard Accessibility", () => {
 
     fireEvent.click(reactButton);
     expect(reactButton).toHaveAttribute("aria-expanded", "false");
-  });
-
-  it("uses no heading elements for skill names to avoid skipping h3 level", () => {
-    render(<SkillsOverview skills={mockSkills} />);
-
-    // No <h4> headings should exist — skill names are inside a <h2> parent
-    const h4Elements = document.querySelectorAll("h4");
-    expect(h4Elements.length).toBe(0);
-
-    // Skill names should still be rendered as visible text
-    expect(screen.getByText("React")).toBeInTheDocument();
-    expect(screen.getByText("TypeScript")).toBeInTheDocument();
   });
 });

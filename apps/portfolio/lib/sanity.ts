@@ -7,14 +7,14 @@ const dataset = "production";
 const apiVersion = "2024-04-05";
 const serverReadToken =
   typeof window === "undefined"
-    ? process.env.SANITY_API_READ_TOKEN ?? process.env.SANITY_API_WRITE_TOKEN
+    ? process.env.SANITY_API_READ_TOKEN
     : undefined;
 
 export const client = createClient({
   projectId,
   dataset,
   apiVersion,
-  useCdn: false,
+  useCdn: true,
   token: serverReadToken,
 });
 
@@ -23,7 +23,10 @@ export const writeClient = createClient({
   dataset,
   apiVersion,
   useCdn: false,
-  token: process.env.SANITY_API_WRITE_TOKEN,
+  token:
+    typeof window === "undefined"
+      ? process.env.SANITY_API_WRITE_TOKEN
+      : undefined,
 });
 
 const builder = imageUrlBuilder(client);
