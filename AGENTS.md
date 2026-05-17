@@ -17,7 +17,7 @@ This project uses **Gentleman Guardian Angel** to ensure high code quality and c
 
 ## Mandatory Rules (NEVER skip these)
 
-### Rule 1: Documentation-First (Context7 before code)
+### Rule 2: Documentation-First (Context7 before code)
 
 - **NEVER** write code involving a library, framework, or API without consulting docs first.
 - Before touching any dependency (React, Next.js, framer-motion, next-intl, Sanity, Tailwind, etc.), call `context7_resolve-library-id` + `context7_query-docs`.
