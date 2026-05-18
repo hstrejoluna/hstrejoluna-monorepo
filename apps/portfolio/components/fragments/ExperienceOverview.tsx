@@ -1,9 +1,18 @@
+"use client";
+
 import { useState } from "react";
-import { m, AnimatePresence } from "framer-motion";
 import { type Experience } from "@/types/sanity";
 import { PortableText } from "@portabletext/react";
 import { Calendar, Building, ChevronRight } from "lucide-react";
 import { useTranslations } from "next-intl";
+
+const renderDescription = (description: Experience["description"]) => {
+  if (typeof description === "string") {
+    return <p>{description}</p>;
+  }
+
+  return <PortableText value={description} />;
+};
 
 export const ExperienceOverview = ({
   experiences,
@@ -16,14 +25,6 @@ export const ExperienceOverview = ({
 
   const toggleExp = (id: string) => {
     setExpandedId((prev) => (prev === id ? null : id));
-  };
-
-  const getDescription = (description: Experience["description"]) => {
-    if (typeof description === "string") {
-      return <p>{description}</p>;
-    }
-
-    return <PortableText value={description} />;
   };
 
   return (
@@ -93,28 +94,23 @@ export const ExperienceOverview = ({
                       </div>
                     </button>
 
-                    <AnimatePresence>
-                      {isExpanded && (
-                        <m.div
-                          initial={{ height: 0, opacity: 0 }}
-                          animate={{ height: "auto", opacity: 1 }}
-                          exit={{ height: 0, opacity: 0 }}
-                          transition={{ duration: 0.3 }}
-                          id={`details-${exp._id}`}
-                          className="overflow-hidden mt-6 pt-6 border-t border-surface_container_highest"
-                        >
-                          <div className="prose prose-invert prose-sm max-w-none prose-p:text-on_surface_variant prose-li:text-on_surface_variant prose-strong:text-on_surface prose-a:text-primary">
-                            {exp.description ? (
-                              getDescription(exp.description)
-                            ) : (
-                              <p className="text-on_surface_variant/50 italic font-mono text-xs">
-                                {tFragments("noDescription")}
-                              </p>
-                            )}
-                          </div>
-                        </m.div>
-                      )}
-                    </AnimatePresence>
+                    <div
+                      id={`details-${exp._id}`}
+                      data-open={isExpanded ? "true" : "false"}
+                      className="collapsible-region mt-6 border-t border-surface_container_highest"
+                    >
+                      <div className="collapsible-inner">
+                        <div className="pt-6 prose prose-invert prose-sm max-w-none prose-p:text-on_surface_variant prose-li:text-on_surface_variant prose-strong:text-on_surface prose-a:text-primary">
+                          {exp.description ? (
+                            renderDescription(exp.description)
+                          ) : (
+                            <p className="text-on_surface_variant/50 italic font-mono text-xs">
+                              {tFragments("noDescription")}
+                            </p>
+                          )}
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>

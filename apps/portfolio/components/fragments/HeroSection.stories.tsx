@@ -1,5 +1,4 @@
 import type { Meta, StoryObj } from "@storybook/nextjs-vite";
-import { LazyMotion, domAnimation } from "framer-motion";
 import { userEvent, within } from "storybook/test";
 import { NextIntlClientProvider } from "next-intl";
 import { HeroSection } from "./HeroSection";
@@ -39,11 +38,9 @@ const meta = {
         locale="en"
         messages={{ hero: heroMessages, brand: brandMessages }}
       >
-        <LazyMotion features={domAnimation}>
-          <div className="bg-void min-h-screen text-white w-full">
-            <Story />
-          </div>
-        </LazyMotion>
+        <div className="bg-void min-h-screen text-white w-full">
+          <Story />
+        </div>
       </NextIntlClientProvider>
     ),
   ],
@@ -171,14 +168,12 @@ export const Scroll: Story = {
         locale="en"
         messages={{ hero: heroMessages, brand: brandMessages }}
       >
-        <LazyMotion features={domAnimation}>
-          <div
-            className="bg-void text-white w-full"
-            style={{ height: "200vh" }}
-          >
-            <Story />
-          </div>
-        </LazyMotion>
+        <div
+          className="bg-void text-white w-full"
+          style={{ height: "200vh" }}
+        >
+          <Story />
+        </div>
       </NextIntlClientProvider>
     ),
   ],

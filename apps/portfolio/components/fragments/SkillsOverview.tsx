@@ -1,5 +1,6 @@
+"use client";
+
 import { useState, useMemo } from "react";
-import { m, AnimatePresence } from "framer-motion";
 import { type Skill } from "@/types/sanity";
 import { HudChip } from "@hstrejoluna/ui";
 
@@ -9,19 +10,25 @@ export const SkillsOverview = ({ skills }: { skills: Skill[] }) => {
   const categories = useMemo(
     () =>
       Array.from(
-        new Set(skills.map((s) => s.category).filter(Boolean)),
-      ) as string[],
+        new Set(
+          skills
+            .map((s) => s.category)
+            .filter((c): c is string => Boolean(c)),
+        ),
+      ),
     [skills],
   );
   const [activeCategory, setActiveCategory] = useState<string>(
     categories[0] || "",
   );
 
-  const filteredSkills = skills.filter((s) => s.category === activeCategory);
+  const filteredSkills = useMemo(
+    () => skills.filter((s) => s.category === activeCategory),
+    [skills, activeCategory],
+  );
 
   return (
     <div className="w-full relative z-20">
-      {/* HUD Filter Bar */}
       <div className="flex flex-wrap gap-2 md:gap-4 mb-8 md:mb-12 border-b border-surface_container_highest pb-4 px-4 md:px-0">
         {categories.map((cat) => (
           <button
@@ -41,14 +48,13 @@ export const SkillsOverview = ({ skills }: { skills: Skill[] }) => {
         ))}
       </div>
 
-      {/* Skills Grid */}
       <div className="grid grid-cols-1 gap-0 border-t border-surface_container_highest">
         {filteredSkills.map((skill) => {
           const isExpanded = expandedId === skill._id;
+          const proficiency = skill.proficiency || 0;
 
           return (
-            <m.div
-              layout
+            <div
               key={skill._id}
               className={`border-b border-surface_container_highest bg-background ${isExpanded ? "bg-surface_container_lowest" : ""}`}
             >
@@ -61,7 +67,7 @@ export const SkillsOverview = ({ skills }: { skills: Skill[] }) => {
               >
                 <div className="flex items-center gap-4">
                   <span className="font-mono text-primary text-xs opacity-70 group-hover:opacity-100">
-                    {`[${skill.proficiency || 0}%]`}
+                    {`[${proficiency}%]`}
                   </span>
                   <h3 className="text-base md:text-lg font-bold text-on_surface uppercase tracking-tight">
                     {skill.name}
@@ -69,49 +75,46 @@ export const SkillsOverview = ({ skills }: { skills: Skill[] }) => {
                 </div>
 
                 <div className="hidden md:flex gap-2">
-                  <HudChip>SYNC_RATE: {skill.proficiency || 0}%</HudChip>
+                  <HudChip>SYNC_RATE: {proficiency}%</HudChip>
                 </div>
               </button>
 
-              <AnimatePresence>
-                {isExpanded && (
-                  <m.div
-                    id={`skill-panel-${skill._id}`}
-                    initial={{ height: 0, opacity: 0 }}
-                    animate={{ height: "auto", opacity: 1 }}
-                    exit={{ height: 0, opacity: 0 }}
-                    transition={{ duration: 0.3 }}
-                    className="overflow-hidden border-t border-primary/20 bg-primary/5"
-                  >
-                    <div className="p-6 md:p-8 space-y-6">
-                      {/* Visual Proficiency Bar */}
-                      <div className="w-full bg-surface_container_highest h-2 relative overflow-hidden">
-                        <m.div
-                          initial={{ width: 0 }}
-                          animate={{ width: `${skill.proficiency || 0}%` }}
-                          transition={{ duration: 1, ease: "easeOut" }}
-                          className="absolute left-0 top-0 bottom-0 bg-primary"
-                        />
-                      </div>
+              <div
+                id={`skill-panel-${skill._id}`}
+                data-open={isExpanded ? "true" : "false"}
+                className="collapsible-region border-t border-primary/20 bg-primary/5"
+              >
+                <div className="collapsible-inner">
+                  <div className="p-6 md:p-8 space-y-6">
+                    <div className="w-full bg-surface_container_highest h-2 relative overflow-hidden">
+                      <div
+                        key={isExpanded ? "open" : "closed"}
+                        className="skill-proficiency-bar absolute left-0 top-0 bottom-0 bg-primary"
+                        style={
+                          {
+                            "--skill-proficiency": `${proficiency}%`,
+                          } as React.CSSProperties
+                        }
+                      />
+                    </div>
 
-                      <div className="font-mono text-xs text-on_surface_variant leading-relaxed columns-1 md:columns-2 gap-8">
-                        <div>
-                          <p className="text-primary mb-2">
-                            {"// DOCUMENTATION_FRAGMENT"}
-                          </p>
-                          <p>
-                            {skill.name} represents a core competency within the{" "}
-                            {skill.category} cluster. Proficiency mapped at{" "}
-                            {skill.proficiency}% indicates active mastery and
-                            deployment capability in production environments.
-                          </p>
-                        </div>
+                    <div className="font-mono text-xs text-on_surface_variant leading-relaxed columns-1 md:columns-2 gap-8">
+                      <div>
+                        <p className="text-primary mb-2">
+                          {"// DOCUMENTATION_FRAGMENT"}
+                        </p>
+                        <p>
+                          {skill.name} represents a core competency within the{" "}
+                          {skill.category} cluster. Proficiency mapped at{" "}
+                          {proficiency}% indicates active mastery and deployment
+                          capability in production environments.
+                        </p>
                       </div>
                     </div>
-                  </m.div>
-                )}
-              </AnimatePresence>
-            </m.div>
+                  </div>
+                </div>
+              </div>
+            </div>
           );
         })}
       </div>

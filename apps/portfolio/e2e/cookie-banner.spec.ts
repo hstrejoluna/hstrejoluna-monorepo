@@ -26,11 +26,10 @@ test.describe("Layer 2: Cookie Consent Banner", () => {
     const acceptButton = banner.locator('button:has-text("Accept")');
     await expect(acceptButton).toBeVisible();
 
-    // framer-motion spring entrance animation (y:"100%"→0) places the
-    // Accept button offscreen via CSS transform. Playwright's toBeVisible()
-    // passes (element has size) but click() fails with "outside viewport".
-    // Bypass via page.evaluate: dispatch a click in the page's JS context,
-    // which skips Playwright's scroll-into-view and viewport checks.
+    // The banner uses a pure-CSS keyframe slide-in (translateY 100%→0).
+    // toBeVisible() can resolve before the animation settles, so click() may
+    // race the layout pass on a fixed-position element. Dispatch the click
+    // in the page's JS context to bypass actionability viewport checks.
     await page.evaluate(() => {
       const buttons = document.querySelectorAll(
         'aside[aria-label="Cookie Consent"] button',

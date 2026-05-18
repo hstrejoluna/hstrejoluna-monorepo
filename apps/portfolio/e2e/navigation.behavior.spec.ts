@@ -66,10 +66,10 @@ test.describe("portfolio navigation behavior", () => {
       .first();
     await expect(certificatesNavLink).toBeVisible();
 
-    // LiquidNav uses framer-motion spring entrance animation (y:100→0).
-    // Playwright's toBeVisible() passes (element has size) but click() fails
-    // with "outside viewport" because the nav is still translated offscreen.
-    // Bypass via page.evaluate: dispatch a click in the page's JS context.
+    // LiquidNav uses a pure-CSS keyframe entrance animation (translateY 100→0).
+    // Even after the animation completes, click() can race the layout pass on
+    // a fixed-position element; dispatching the click in the page's JS context
+    // sidesteps Playwright's actionability viewport check.
     await page.evaluate(() => {
       const nav = document.querySelector('[data-testid="liquid-nav"]');
       const buttons = nav?.querySelectorAll("button") ?? [];
@@ -128,5 +128,45 @@ test.describe("portfolio navigation behavior", () => {
 
     await expect(mobileNavigation).toHaveCount(0);
     await expect(page).toHaveURL(/#certificates$/);
+  });
+
+  test("CommandNav settles inside viewport after entrance animation", async ({
+    page,
+  }) => {
+    await page.goto("/");
+
+    const liquidNav = page.getByTestId("liquid-nav");
+    await expect(liquidNav).toBeVisible();
+
+    await expect
+      .poll(
+        async () => {
+          const box = await liquidNav.boundingBox();
+          const viewport = page.viewportSize();
+          if (!box || !viewport) return false;
+          return box.y + box.height > 0 && box.y < viewport.height;
+        },
+        { timeout: 5_000, intervals: [100, 250, 500] },
+      )
+      .toBe(true);
+  });
+
+  test("CommandNav also settles inside viewport on /es", async ({ page }) => {
+    await page.goto("/es");
+
+    const liquidNav = page.getByTestId("liquid-nav");
+    await expect(liquidNav).toBeVisible();
+
+    await expect
+      .poll(
+        async () => {
+          const box = await liquidNav.boundingBox();
+          const viewport = page.viewportSize();
+          if (!box || !viewport) return false;
+          return box.y + box.height > 0 && box.y < viewport.height;
+        },
+        { timeout: 5_000, intervals: [100, 250, 500] },
+      )
+      .toBe(true);
   });
 });
